@@ -1,0 +1,114 @@
+{
+  "name": "Coleta - Teste Preciso de Ajuda",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "teste-preciso-de-ajuda",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "https://orangebr.github.io",
+          "rawBody": true
+        }
+      },
+      "id": "webhook-coleta",
+      "name": "Recebe a sessão",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [0, 0],
+      "webhookId": "teste-preciso-de-ajuda"
+    },
+    {
+      "parameters": {
+        "jsCode": "/* A página envia text/plain com JSON dentro — é o único Content-Type que o\n   navegador trata como requisição simples, sem preflight. Dependendo da\n   versão do n8n o corpo chega como string, como Buffer (rawBody) ou já\n   desserializado; os três casos são tratados aqui.\n\n   Saem dois itens: o .md legível e o .json completo com o replay. */\nconst entrada = $input.first().json;\nlet cru = entrada.body !== undefined ? entrada.body : entrada;\nif (cru && cru.data && cru.type === 'Buffer') cru = Buffer.from(cru.data).toString('utf8');\nif (Buffer.isBuffer(cru)) cru = cru.toString('utf8');\nconst dados = typeof cru === 'string' ? JSON.parse(cru) : cru;\n\nconst sessao = String(dados.sessionId || 'sem-id').replace(/[^A-Za-z0-9_-]/g, '');\nconst base = 'respostas/teste-preciso-de-ajuda-' + sessao;\nconst emBase64 = (texto) => Buffer.from(texto, 'utf8').toString('base64');\n\nconst arquivos = [\n  { caminho: base + '.md', conteudo: String(dados.md || '') },\n];\n\n/* O replay só é gravado quando vem junto: o beacon de quem fecha a aba no\n   meio não o carrega (teto de 64KB do navegador), e sobrescrever com vazio\n   apagaria a gravação que já tinha chegado. */\nif (dados.replay && dados.replay.length) {\n  arquivos.push({ caminho: base + '.json', conteudo: JSON.stringify(dados) });\n}\n\nreturn arquivos.map((a) => ({\n  json: {\n    caminho: a.caminho,\n    conteudoBase64: emBase64(a.conteudo),\n    mensagem: 'Sessão ' + sessao,\n    url: 'https://api.github.com/repos/orangebr/teste-preciso-de-ajuda/contents/' + a.caminho,\n  },\n}));"
+      },
+      "id": "prepara-arquivos",
+      "name": "Prepara os arquivos",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [220, 0]
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.url }}?ref=main",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "id": "busca-sha",
+      "name": "Busca o sha atual",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [440, 0],
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "github-teste-preciso-de-ajuda",
+          "name": "GitHub - teste-preciso-de-ajuda"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "/* O sha do arquivo atual é obrigatório para sobrescrever. Sem ele o GitHub\n   responde 422 — que é exatamente o que acontece no segundo envio da mesma\n   sessão (o reenvio de um minuto, o beacon de saída, a conclusão).\n   Na primeira vez o GET devolve 404 e seguimos sem sha. */\nconst preparados = $('Prepara os arquivos').all();\n\nreturn preparados.map((item, i) => {\n  const encontrado = $input.all()[i];\n  const sha = encontrado && encontrado.json ? encontrado.json.sha : undefined;\n  const corpo = {\n    message: item.json.mensagem,\n    content: item.json.conteudoBase64,\n    branch: 'main',\n  };\n  if (sha) corpo.sha = sha;\n  return { json: { url: item.json.url, corpo, caminho: item.json.caminho } };\n});"
+      },
+      "id": "junta-sha",
+      "name": "Junta o sha",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [660, 0]
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "={{ $json.url }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.corpo) }}",
+        "options": {}
+      },
+      "id": "commita",
+      "name": "Commita no repositório",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [880, 0],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "github-teste-preciso-de-ajuda",
+          "name": "GitHub - teste-preciso-de-ajuda"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ ok: true }) }}",
+        "options": {}
+      },
+      "id": "responde",
+      "name": "Responde ok",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [1100, 0]
+    }
+  ],
+  "connections": {
+    "Recebe a sessão": { "main": [[{ "node": "Prepara os arquivos", "type": "main", "index": 0 }]] },
+    "Prepara os arquivos": { "main": [[{ "node": "Busca o sha atual", "type": "main", "index": 0 }]] },
+    "Busca o sha atual": { "main": [[{ "node": "Junta o sha", "type": "main", "index": 0 }]] },
+    "Junta o sha": { "main": [[{ "node": "Commita no repositório", "type": "main", "index": 0 }]] },
+    "Commita no repositório": { "main": [[{ "node": "Responde ok", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" },
+  "pinData": {}
+}
