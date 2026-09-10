@@ -5,6 +5,9 @@ Teste de usabilidade do novo fluxo de abertura de chamado do Pigz Partner.
 **Link do teste:** https://orangebr.github.io/teste-preciso-de-ajuda/
 **Player das sessões:** https://orangebr.github.io/teste-preciso-de-ajuda/player.html
 
+> **Vai ligar a coleta no n8n?** As instruções passo a passo estão em
+> **[HANDOFF.md](HANDOFF.md)**.
+
 ## O que é
 
 Página única, sem build: `index.html`. Uma réplica da tela de Vendas com um

@@ -1073,14 +1073,22 @@ function irPara(fase) {
 }
 
 /* ═══ Persistência ═════════════════════════════════════════════════════
-   A página é hospedada fora do claude.ai, então não há banco: as respostas
-   vão por POST para um Web App do Google Apps Script, que grava o .md numa
-   pasta do Drive. Cole a URL do /exec abaixo (ou passe ?api=... na URL para
-   testar outro destino sem reeditar o arquivo).
+   ┌──────────────────────────────────────────────────────────────────┐
+   │ TROCAR O DESTINO DA COLETA É MUDAR A LINHA ABAIXO. Nada mais.    │
+   └──────────────────────────────────────────────────────────────────┘
+
+   A página é estática, então ela não guarda nada: cada sessão vai por POST
+   para um intermediário que tem credencial e escreve por ela. Hoje é o Web
+   App do Apps Script (grava no Drive); o destino final é o webhook do n8n em
+   automation.pigz.com.br, que commita em respostas/ neste repositório.
+   Ver COLETA.md e HANDOFF.md.
+
+   Para experimentar outro destino sem reeditar o arquivo, passe ?api=URL na
+   URL da página — é assim que se testa o webhook antes de trocar de vez.
 
    O envio é text/plain de propósito: é o único Content-Type que o navegador
-   trata como requisição simples, e sem preflight o Apps Script — que não
-   responde OPTIONS — aceita a chamada. */
+   trata como requisição simples. Com qualquer outro ele dispara um preflight
+   OPTIONS, que o Apps Script não responde — e nada chegaria. */
 const ENDPOINT_PADRAO = 'https://script.google.com/macros/s/AKfycbyzffpLhylKBt5vENgIoP_28cSOXJpeuSkjCfdkg3H4kBfgZrIOwq2nPh24n6DzPrsu/exec';
 const ENDPOINT = new URLSearchParams(location.search).get('api') || ENDPOINT_PADRAO;
 
