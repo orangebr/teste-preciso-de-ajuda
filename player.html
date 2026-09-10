@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Replay — Teste do Preciso de Ajuda</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/rrweb-player@1.0.0-alpha.4/dist/style.css">
+<script src="https://cdn.jsdelivr.net/npm/rrweb-player@1.0.0-alpha.4/dist/index.js"></script>
+<style>
+  :root { color-scheme: light; --ink:#212121; --ink2:#616161; --ink3:#9E9E9E; --line:#E0E0E0; --brand:#FA641E; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:#F2F2F4; color:var(--ink); font-family:Poppins,system-ui,sans-serif; font-size:14px; }
+  header { display:flex; align-items:center; gap:16px; flex-wrap:wrap; padding:16px 24px; background:#fff; border-bottom:1px solid var(--line); }
+  header h1 { font-size:16px; font-weight:600; margin:0; }
+  header .sub { font-size:13px; color:var(--ink2); }
+  header .spacer { flex:1; }
+  .btn { height:36px; padding:0 14px; border:1px solid #DDD; border-radius:8px; background:#fff; font-family:inherit; font-size:13px; cursor:pointer; }
+  .btn:hover { background:#F5F5F5; }
+  main { padding:24px; display:grid; grid-template-columns:1fr 340px; gap:24px; align-items:start; }
+  #palco { background:#fff; border-radius:12px; padding:12px; overflow:auto; }
+  aside { background:#fff; border-radius:12px; padding:20px; }
+  aside h2 { font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:var(--ink3); margin:0 0 12px; font-weight:600; }
+  pre { margin:0; white-space:pre-wrap; font-family:ui-monospace,Menlo,monospace; font-size:11.5px; line-height:1.7; color:var(--ink2); max-height:70vh; overflow:auto; }
+  .vazio { padding:64px 24px; text-align:center; color:var(--ink2); }
+  .vazio p { max-width:52ch; margin:0 auto 16px; line-height:22px; }
+  @media (max-width:1000px) { main { grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>Replay da sessão</h1>
+    <div class="sub" id="sub">Nenhuma sessão carregada</div>
+  </div>
+  <span class="spacer"></span>
+  <input type="file" id="arquivo" accept="application/json,.json" hidden>
+  <button class="btn" id="abrir" type="button">Abrir arquivo .json</button>
+</header>
+
+<main>
+  <div id="palco">
+    <div class="vazio" id="vazio">
+      <p>
+        Abra o <code>.json</code> de uma sessão — os arquivos ficam em
+        <code>respostas/</code> neste repositório, ou você pode carregar um que
+        o lojista tenha baixado.
+      </p>
+      <p>Também dá para apontar direto pela URL: <code>player.html?f=respostas/nome-do-arquivo.json</code></p>
+    </div>
+  </div>
+  <aside>
+    <h2>Relatório da sessão</h2>
+    <pre id="relatorio">—</pre>
+  </aside>
+</main>
+
+<script>
+/* Reprodutor das sessões gravadas com rrweb. Recebe o mesmo pacote que o teste
+   envia: { sessionId, md, dados, replay }. O replay é reconstruído a partir do
+   DOM registrado, então o que aparece aqui é a página como ela estava — não um
+   vídeo. */
+const palco = document.getElementById('palco');
+const sub = document.getElementById('sub');
+const relatorio = document.getElementById('relatorio');
+const entrada = document.getElementById('arquivo');
+
+document.getElementById('abrir').addEventListener('click', () => entrada.click());
+entrada.addEventListener('change', () => {
+  const f = entrada.files && entrada.files[0];
+  if (!f) return;
+  const leitor = new FileReader();
+  leitor.onload = () => tocar(JSON.parse(leitor.result), f.name);
+  leitor.readAsText(f);
+});
+
+const arquivoNaUrl = new URLSearchParams(location.search).get('f');
+if (arquivoNaUrl) {
+  fetch(arquivoNaUrl)
+    .then((r) => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+    .then((d) => tocar(d, arquivoNaUrl))
+    .catch((e) => { sub.textContent = 'Não consegui abrir ' + arquivoNaUrl + ' (' + e.message + ')'; });
+}
+
+function tocar(pacote, nome) {
+  const eventos = pacote.replay || pacote.events || [];
+  relatorio.textContent = pacote.md || '—';
+  sub.textContent = nome + ' · ' + eventos.length + ' eventos';
+
+  if (eventos.length < 2) {
+    palco.innerHTML = '<div class="vazio"><p>Este arquivo não tem replay — só o relatório, aí ao lado.</p></div>';
+    return;
+  }
+  palco.innerHTML = '';
+  /* A largura do palco manda: o rrweb-player escala a gravação para caber. */
+  const largura = Math.max(480, palco.clientWidth - 24);
+  new rrwebPlayer({
+    target: palco,
+    props: { events: eventos, width: largura, height: Math.round(largura * 0.62), autoPlay: false, speedOption: [1, 2, 4, 8] },
+  });
+}
+</script>
+</body>
+</html>
