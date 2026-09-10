@@ -1,32 +1,30 @@
 # Respostas
 
-Uma sessão do teste = um arquivo `.json` aqui, com este formato:
+Uma sessão do teste = dois arquivos aqui:
 
-```json
-{
-  "sessionId": "S...",
-  "md": "# Teste do Preciso de Ajuda — ... (o relatório legível)",
-  "dados": { "marcos": [], "form": {}, "draft": {} },
-  "replay": [ /* eventos do rrweb */ ]
-}
-```
+- `teste-preciso-de-ajuda-<sessão>.md` — o relatório legível
+- `teste-preciso-de-ajuda-<sessão>.json` — o mesmo relatório mais o replay
+  do rrweb (DOM, ponteiro, scroll)
 
-Para assistir a uma sessão, abra o player apontando para o arquivo:
+Para assistir a uma sessão:
 
-    https://eucj.github.io/teste-preciso-de-ajuda/player.html?f=respostas/NOME.json
+    https://orangebr.github.io/teste-preciso-de-ajuda/player.html?f=respostas/teste-preciso-de-ajuda-SESSAO.json
 
-Ou abra `player.html` e carregue o arquivo pelo botão.
+Ou abra o player e carregue o arquivo pelo botão.
 
-## Como os arquivos chegam aqui
+## Como chegam aqui
 
-O GitHub Pages é estático e não recebe POST, e um token com permissão de
-escrita dentro de uma página pública seria um vazamento — qualquer pessoa que
-abrisse o teste teria acesso de escrita ao repositório. Por isso a página **não
-grava aqui sozinha**. O caminho é:
+O GitHub Pages é estático e não recebe POST, e um token de escrita dentro de
+uma página pública seria um vazamento — qualquer pessoa que abrisse o teste
+teria acesso de escrita a este repositório. Por isso quem escreve aqui não é a
+página, é o Apps Script, que guarda o token do lado servidor.
 
-1. A página envia a sessão para o Web App do Apps Script.
-2. O Apps Script grava no Google Drive (pasta *Teste Preciso de Ajuda*).
-3. Os arquivos são copiados do Drive para cá.
+    página do teste  →  Web App do Apps Script  →  este repositório
+                                               ↘  Google Drive (cópia de segurança)
 
-Se o envio automático falhar, a própria página oferece o download do `.json`
-para o lojista — é só soltar o arquivo nesta pasta.
+O Drive é gravado primeiro, porque é o passo que não depende de credencial. Se
+o commit falhar, a sessão continua salva lá.
+
+Enquanto a propriedade `GITHUB_TOKEN` não estiver configurada no Apps Script,
+nada chega nesta pasta — as instruções estão no cabeçalho de
+`apps-script-coleta.gs`.
