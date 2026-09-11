@@ -1,1 +1,1 @@
-# fumaca segundo envio
+# so md, sem replay
