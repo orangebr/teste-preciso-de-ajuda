@@ -2,8 +2,11 @@
 
 Teste de usabilidade do novo fluxo de abertura de chamado do Pigz Partner.
 
-**Link do teste:** https://orangebr.github.io/teste-preciso-de-ajuda/
-**Player das sessões:** https://orangebr.github.io/teste-preciso-de-ajuda/player.html
+| | |
+| --- | --- |
+| Teste | https://usabilidade.pigz.com.br/ |
+| **Resultados** | https://usabilidade.pigz.com.br/resultados.html |
+| Player de uma sessão | https://usabilidade.pigz.com.br/player.html |
 
 > **Vai ligar a coleta no n8n?** As instruções passo a passo estão em
 > **[HANDOFF.md](HANDOFF.md)**.

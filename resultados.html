@@ -1,0 +1,515 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Resultados do teste</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap">
+<style>
+  /* Painel operacional: é olhado e operado, não lido de cima a baixo. Resumo
+     antes do detalhe, e estado na forma além da cor.
+
+     Cores de status vêm do próprio Partner (#00AB50 / #EBA417 / #CC221F). O
+     validador aponta separação CVD de ΔE 6.0 entre verde e amarelo para
+     protanopia — banda que só é legal com codificação secundária. Por isso
+     TODO segmento carrega rótulo e número, há folga de 2px entre eles, e a
+     mesma informação existe em tabela logo abaixo. */
+  :root {
+    color-scheme: light;
+    --bg:#F2F2F4; --card:#FFFFFF; --linha:#E8E8EA;
+    --ink:#212121; --ink2:#616161; --ink3:#8C8C8C;
+    --marca:#FA641E; --marca-fraca:#FDE8DF;
+    --bom:#00AB50; --meio:#EBA417; --ruim:#CC221F;
+    --grade:#F0F0F2;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --bg:#141518; --card:#1C1D21; --linha:#2A2C31;
+      --ink:#EDEEF0; --ink2:#A8ABB2; --ink3:#7A7E86;
+      --marca:#FF7A3D; --marca-fraca:#3A2113;
+      --bom:#3ECC7F; --meio:#F0B84A; --ruim:#F06A63;
+      --grade:#25272C;
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --bg:#141518; --card:#1C1D21; --linha:#2A2C31;
+    --ink:#EDEEF0; --ink2:#A8ABB2; --ink3:#7A7E86;
+    --marca:#FF7A3D; --marca-fraca:#3A2113;
+    --bom:#3ECC7F; --meio:#F0B84A; --ruim:#F06A63;
+    --grade:#25272C;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:Poppins,system-ui,-apple-system,sans-serif; font-size:14px;
+    -webkit-font-smoothing:antialiased;
+  }
+  .num { font-variant-numeric: tabular-nums; }
+
+  header {
+    position:sticky; top:0; z-index:10;
+    display:flex; align-items:center; gap:16px; flex-wrap:wrap;
+    padding:16px 24px; background:var(--card); border-bottom:1px solid var(--linha);
+  }
+  header h1 { font-size:16px; font-weight:600; margin:0; }
+  header .sub { font-size:12.5px; color:var(--ink2); }
+  header .espaco { flex:1; }
+  .btn {
+    height:34px; padding:0 14px; border-radius:8px; cursor:pointer;
+    background:var(--card); color:var(--ink); border:1px solid var(--linha);
+    font-family:inherit; font-size:13px; display:inline-flex; align-items:center; gap:7px;
+  }
+  .btn:hover { border-color:var(--ink3); }
+  .btn.on { background:var(--marca); border-color:var(--marca); color:#fff; }
+  .btn:disabled { opacity:.55; cursor:default; }
+  .pisca { width:7px; height:7px; border-radius:50%; background:var(--bom); }
+
+  main { max-width:1180px; margin:0 auto; padding:24px 24px 72px; display:flex; flex-direction:column; gap:24px; }
+
+  .tiles { display:grid; grid-template-columns:repeat(auto-fit,minmax(178px,1fr)); gap:14px; }
+  .tile { background:var(--card); border-radius:12px; padding:16px 18px; }
+  .tile .rot { font-size:12px; color:var(--ink2); }
+  .tile .big { font-size:30px; font-weight:600; line-height:1.15; margin-top:6px; }
+  .tile .pe { font-size:12px; color:var(--ink3); margin-top:3px; }
+  .tile.destaque { box-shadow: inset 3px 0 0 var(--marca); }
+
+  section { background:var(--card); border-radius:12px; padding:20px 22px; }
+  section > h2 { font-size:14px; font-weight:600; margin:0 0 4px; }
+  section > .ajuda { font-size:12.5px; line-height:19px; color:var(--ink2); margin:0 0 18px; }
+  .duas { display:grid; grid-template-columns:1fr 1fr; gap:24px; }
+  @media (max-width:860px){ .duas { grid-template-columns:1fr; } }
+
+  /* Barra empilhada com rótulo em cada segmento — a codificação secundária
+     que a separação CVD exige. */
+  .pilha { display:flex; gap:2px; height:34px; border-radius:6px; overflow:hidden; }
+  .pilha span { display:flex; align-items:center; justify-content:center; min-width:2px;
+                font-size:12px; font-weight:600; color:#fff; }
+  .legenda { display:flex; gap:16px; flex-wrap:wrap; margin-top:12px; font-size:12.5px; color:var(--ink2); }
+  .legenda i { width:9px; height:9px; border-radius:2px; display:inline-block; margin-right:6px; }
+
+  /* Magnitude: uma série, uma cor, sem legenda — o título já a nomeia. */
+  .barras { display:flex; flex-direction:column; gap:9px; }
+  .barra { display:grid; grid-template-columns:minmax(88px,auto) 1fr 42px; gap:12px; align-items:center; font-size:12.5px; }
+  .barra .trilho { background:var(--grade); border-radius:4px; height:16px; overflow:hidden; }
+  .barra .vale { height:100%; background:var(--marca); border-radius:0 4px 4px 0; min-width:2px; transition:width .25s ease; }
+  .barra .qtd { text-align:right; color:var(--ink2); }
+  .barra .rot { color:var(--ink); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+
+  details.tabela { margin-top:16px; }
+  details.tabela summary { font-size:12.5px; color:var(--ink2); cursor:pointer; }
+  table { width:100%; border-collapse:collapse; margin-top:10px; font-size:12.5px; }
+  th, td { text-align:left; padding:7px 8px; border-bottom:1px solid var(--linha); white-space:nowrap; }
+  th { font-weight:500; color:var(--ink3); font-size:11px; text-transform:uppercase; letter-spacing:.04em; }
+  td.n { text-align:right; }
+
+  .sessoes { overflow-x:auto; }
+  .sessoes table { min-width:760px; }
+  .sessoes a { color:var(--marca); text-decoration:none; }
+  .sessoes a:hover { text-decoration:underline; }
+  .marca-status { display:inline-flex; align-items:center; gap:6px; }
+  .ponto { width:8px; height:8px; border-radius:50%; flex:none; }
+
+  .aviso { background:var(--card); border-radius:12px; padding:20px 22px; color:var(--ink2); line-height:21px; }
+  .aviso b { color:var(--ink); }
+  .frase { font-size:13px; line-height:21px; color:var(--ink2); margin:14px 0 0; }
+  .frase b { color:var(--ink); font-weight:600; }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>Resultados do teste do Preciso de Ajuda</h1>
+    <div class="sub" id="resumo-topo">carregando…</div>
+  </div>
+  <span class="espaco"></span>
+  <button class="btn" id="btn-avisar" type="button" title="Aviso do navegador quando entrar uma sessão nova">Avisar quando chegar</button>
+  <button class="btn" id="btn-testes" type="button">Mostrar testes internos</button>
+  <button class="btn" id="btn-atualizar" type="button">Atualizar</button>
+</header>
+
+<main id="painel">
+  <div class="aviso" id="estado">Buscando as sessões no repositório…</div>
+</main>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════════════
+   As sessões moram em respostas/ neste repositório. O painel lê pela API
+   pública do GitHub — sem token, porque o repositório é público.
+
+   O .json de cada sessão carrega o replay inteiro (centenas de KB). Baixar
+   tudo a cada visita seria lento e gastaria o limite de 60 chamadas por hora,
+   então cada arquivo é lido UMA vez e o que fica guardado no navegador é só o
+   resumo extraído — nunca o replay. A chave é o sha do arquivo: se o conteúdo
+   mudar, o sha muda e ele é lido de novo.
+   ═══════════════════════════════════════════════════════════════════════ */
+const REPO = 'orangebr/teste-preciso-de-ajuda';
+const PASTA = 'respostas';
+const API = 'https://api.github.com/repos/' + REPO + '/contents/' + PASTA;
+const CACHE = 'resultados-teste-v1';
+const INTERVALO_MS = 60000;
+
+const cache = carregarCache();
+let sessoes = [];
+let mostrarTestes = false;
+let jaVistas = new Set();
+let avisarLigado = false;
+
+function carregarCache() {
+  try { return JSON.parse(localStorage.getItem(CACHE) || '{}'); } catch (e) { return {}; }
+}
+function salvarCache() {
+  try { localStorage.setItem(CACHE, JSON.stringify(cache)); } catch (e) { /* modo privado */ }
+}
+
+/* ── Leitura ──────────────────────────────────────────────────────────── */
+
+async function buscar() {
+  const r = await fetch(API, { headers: { Accept: 'application/vnd.github+json' }, cache: 'no-store' });
+  if (r.status === 403) throw new Error('limite-de-chamadas');
+  if (!r.ok) throw new Error('HTTP ' + r.status);
+  const arquivos = (await r.json()).filter((f) => f.name.endsWith('.json'));
+
+  const lidas = [];
+  for (const f of arquivos) {
+    if (cache[f.sha]) { lidas.push(cache[f.sha]); continue; }
+    try {
+      const bruto = await fetch(f.download_url, { cache: 'no-store' }).then((x) => x.json());
+      const resumo = resumir(bruto, f.name);
+      cache[f.sha] = resumo;
+      lidas.push(resumo);
+    } catch (e) { /* arquivo corrompido ou pela metade: ignora e segue */ }
+  }
+  salvarCache();
+  lidas.sort((a, b) => (b.quando || '').localeCompare(a.quando || ''));
+  return lidas;
+}
+
+/** Só o que o painel precisa. O replay fica de fora de propósito. */
+function resumir(bruto, arquivo) {
+  const d = bruto.dados || {};
+  const f = d.form || {};
+  const draft = d.draft || {};
+  const marcos = Array.isArray(d.marcos) ? d.marcos : [];
+  const abriu = marcos.find((m) => m.evento === 'abriu-ajuda');
+  const mortos = marcos.filter((m) => m.evento === 'clique-sem-resposta').map((m) => m.detalhe).filter(Boolean);
+
+  return {
+    id: bruto.sessionId || d.sessionId || arquivo,
+    arquivo: arquivo,
+    /* Uma sessão de verdade tem linha do tempo; os disparos de fumaça do
+       desenvolvimento chegam com `dados` vazio. */
+    real: marcos.length > 0,
+    quando: d.abertoEm || '',
+    duracao: d.duracaoTotalSegundos || 0,
+    cliques: d.cliques || 0,
+    segundosAteAjuda: abriu ? abriu.emSegundos : null,
+    convites: (d.convites || []).length,
+    protocolo: d.protocolo || null,
+    tarefa: draft.taskId || null,
+    relato: (draft.description || '').trim().length,
+    estrelas: f.estrelas || 0,
+    conseguiu: f.conseguiu || '',
+    nps: (f.nps === 0 || f.nps) ? f.nps : null,
+    comentario: (f.comentario || '').trim(),
+    verMais: Boolean(d.verMaisAberto),
+    barrado: (d.barradoEm || []).length,
+    cliquesMortos: mortos,
+    janela: d.janela || '',
+  };
+}
+
+/* ── Números ──────────────────────────────────────────────────────────── */
+
+const mediana = (lista) => {
+  const v = lista.filter((x) => typeof x === 'number').sort((a, b) => a - b);
+  if (!v.length) return null;
+  const m = Math.floor(v.length / 2);
+  return v.length % 2 ? v[m] : (v[m - 1] + v[m]) / 2;
+};
+const pct = (parte, todo) => (todo ? Math.round((parte / todo) * 100) : 0);
+const tempo = (s) => (s == null ? '—' : (s < 60 ? Math.round(s) + 's' : Math.floor(s / 60) + 'min ' + String(Math.round(s % 60)).padStart(2, '0') + 's'));
+const contar = (lista) => lista.reduce((m, x) => (m[x] = (m[x] || 0) + 1, m), {});
+
+const TAREFAS = {
+  pedido:'Problemas com pedido', produto:'Produto ou cardápio', caixa:'Abrir ou fechar caixa',
+  acesso:'Acesso e senhas', imprimir:'Impressões', relatorio:'Tirar um relatório',
+  fatura:'Mensalidade ou fatura', nota:'Nota fiscal', entrega:'Entrega e entregador',
+  dados:'Dados da loja', visibilidade:'Cliente não acha a loja', naosei:'Não sei dizer',
+};
+
+/* ── Desenho ──────────────────────────────────────────────────────────── */
+
+function barras(itens, total) {
+  const maior = Math.max(1, ...itens.map((i) => i.valor));
+  return '<div class="barras">' + itens.map((i) =>
+    '<div class="barra" title="' + i.rotulo + ': ' + i.valor + (total ? ' de ' + total : '') + '">' +
+      '<span class="rot">' + i.rotulo + '</span>' +
+      '<span class="trilho"><span class="vale" style="width:' + Math.round((i.valor / maior) * 100) + '%"></span></span>' +
+      '<span class="qtd num">' + i.valor + '</span>' +
+    '</div>').join('') + '</div>';
+}
+
+function pilha(partes) {
+  const total = partes.reduce((s, p) => s + p.valor, 0) || 1;
+  return '<div class="pilha">' + partes.map((p) => {
+    const largura = (p.valor / total) * 100;
+    return '<span style="flex:' + Math.max(p.valor, 0.001) + ';background:' + p.cor + '" title="' + p.rotulo + ': ' + p.valor + '">' +
+      (largura > 11 ? p.valor : '') + '</span>';
+  }).join('') + '</div>' +
+  '<div class="legenda">' + partes.map((p) =>
+    '<span><i style="background:' + p.cor + '"></i>' + p.rotulo + ' <b class="num">' + p.valor + '</b> (' + pct(p.valor, total) + '%)</span>'
+  ).join('') + '</div>';
+}
+
+function tabela(cabecalhos, linhas) {
+  return '<details class="tabela"><summary>Ver como tabela</summary><table><thead><tr>' +
+    cabecalhos.map((c, i) => '<th' + (i ? ' class="n"' : '') + '>' + c + '</th>').join('') +
+    '</tr></thead><tbody>' + linhas.map((l) => '<tr>' +
+      l.map((c, i) => '<td' + (i ? ' class="n num"' : '') + '>' + c + '</td>').join('') +
+    '</tr>').join('') + '</tbody></table></details>';
+}
+
+function pintar() {
+  const visiveis = sessoes.filter((s) => mostrarTestes || s.real);
+  const painel = document.getElementById('painel');
+
+  if (!visiveis.length) {
+    painel.innerHTML = '<div class="aviso"><b>Nenhuma sessão ainda.</b> Assim que um lojista terminar o teste, ' +
+      'o arquivo aparece em <code>respostas/</code> e este painel conta sozinho.</div>';
+    document.getElementById('resumo-topo').textContent = 'nenhuma sessão';
+    return;
+  }
+
+  const concluidas = visiveis.filter((s) => s.nps !== null);
+  const abriramChamado = visiveis.filter((s) => s.protocolo);
+  const acharamSozinhos = visiveis.filter((s) => s.segundosAteAjuda != null && s.convites === 0);
+  const naoAcharam = visiveis.filter((s) => s.segundosAteAjuda == null);
+
+  const nps = concluidas.map((s) => s.nps);
+  const prom = nps.filter((n) => n >= 9).length;
+  const neu = nps.filter((n) => n >= 7 && n <= 8).length;
+  const det = nps.filter((n) => n <= 6).length;
+  const npsScore = nps.length ? Math.round(((prom - det) / nps.length) * 100) : null;
+
+  const estrelas = concluidas.map((s) => s.estrelas).filter(Boolean);
+  const mediaEstrelas = estrelas.length ? (estrelas.reduce((a, b) => a + b, 0) / estrelas.length) : null;
+
+  const conseguiu = contar(concluidas.map((s) => s.conseguiu).filter(Boolean));
+  const tarefas = contar(visiveis.map((s) => s.tarefa).filter(Boolean));
+  const mortos = contar(visiveis.flatMap((s) => s.cliquesMortos));
+
+  const ultima = visiveis[0];
+  document.getElementById('resumo-topo').innerHTML =
+    visiveis.length + ' sessões · última ' + haQuanto(ultima.quando) +
+    ' · <span style="color:var(--ink3)">atualiza sozinho a cada minuto</span>';
+
+  painel.innerHTML = `
+    <div class="tiles">
+      <div class="tile destaque">
+        <div class="rot">Sessões</div>
+        <div class="big num">${visiveis.length}</div>
+        <div class="pe">${concluidas.length} responderam a avaliação</div>
+      </div>
+      <div class="tile">
+        <div class="rot">Acharam a ajuda sozinhos</div>
+        <div class="big num">${pct(acharamSozinhos.length, visiveis.length)}%</div>
+        <div class="pe">${acharamSozinhos.length} de ${visiveis.length} · ${naoAcharam.length} não acharam</div>
+      </div>
+      <div class="tile">
+        <div class="rot">Abriram o chamado</div>
+        <div class="big num">${pct(abriramChamado.length, visiveis.length)}%</div>
+        <div class="pe">${abriramChamado.length} de ${visiveis.length} chegaram ao fim do fluxo</div>
+      </div>
+      <div class="tile">
+        <div class="rot">Tempo até achar o “?”</div>
+        <div class="big num">${tempo(mediana(visiveis.map((s) => s.segundosAteAjuda)))}</div>
+        <div class="pe">mediana · teste inteiro em ${tempo(mediana(concluidas.map((s) => s.duracao)))}</div>
+      </div>
+      <div class="tile">
+        <div class="rot">NPS</div>
+        <div class="big num">${npsScore === null ? '—' : npsScore}</div>
+        <div class="pe">${nps.length} respostas · média ${nps.length ? (nps.reduce((a, b) => a + b, 0) / nps.length).toFixed(1) : '—'}</div>
+      </div>
+      <div class="tile">
+        <div class="rot">Estrelas</div>
+        <div class="big num">${mediaEstrelas ? mediaEstrelas.toFixed(1) : '—'}</div>
+        <div class="pe">de 5 · ${estrelas.length} avaliações</div>
+      </div>
+    </div>
+
+    <section>
+      <h2>Achar a ajuda</h2>
+      <p class="ajuda">É a pergunta principal do teste. “Sozinho” = abriu o “?” sem o teste ter dado
+        nenhuma dica; “depois da dica” = só abriu depois que a pílula piscou; “não achou” = terminou sem abrir.</p>
+      ${pilha([
+        { rotulo:'Sozinho', valor: acharamSozinhos.length, cor:'var(--bom)' },
+        { rotulo:'Depois da dica', valor: visiveis.length - acharamSozinhos.length - naoAcharam.length, cor:'var(--meio)' },
+        { rotulo:'Não achou', valor: naoAcharam.length, cor:'var(--ruim)' },
+      ])}
+      ${tabela(['Situação','Sessões','%'], [
+        ['Sozinho', acharamSozinhos.length, pct(acharamSozinhos.length, visiveis.length) + '%'],
+        ['Depois da dica', visiveis.length - acharamSozinhos.length - naoAcharam.length, pct(visiveis.length - acharamSozinhos.length - naoAcharam.length, visiveis.length) + '%'],
+        ['Não achou', naoAcharam.length, pct(naoAcharam.length, visiveis.length) + '%'],
+      ])}
+    </section>
+
+    <div class="duas">
+      <section>
+        <h2>NPS</h2>
+        <p class="ajuda">Promotores 9–10, neutros 7–8, detratores 0–6.</p>
+        ${nps.length ? pilha([
+          { rotulo:'Promotores', valor: prom, cor:'var(--bom)' },
+          { rotulo:'Neutros', valor: neu, cor:'var(--meio)' },
+          { rotulo:'Detratores', valor: det, cor:'var(--ruim)' },
+        ]) : '<p class="ajuda">sem respostas ainda</p>'}
+      </section>
+      <section>
+        <h2>Conseguiu sozinho?</h2>
+        <p class="ajuda">O que a pessoa disse, depois de fazer.</p>
+        ${concluidas.length ? pilha([
+          { rotulo:'Sim, sozinho', valor: conseguiu.sozinho || 0, cor:'var(--bom)' },
+          { rotulo:'Travei em algum ponto', valor: conseguiu.travei || 0, cor:'var(--meio)' },
+          { rotulo:'Não consegui', valor: conseguiu.nao || 0, cor:'var(--ruim)' },
+        ]) : '<p class="ajuda">sem respostas ainda</p>'}
+      </section>
+    </div>
+
+    <div class="duas">
+      <section>
+        <h2>Estrelas</h2>
+        <p class="ajuda">“Como foi pedir ajuda nessa tela?”</p>
+        ${barras([5,4,3,2,1].map((n) => ({ rotulo: n + ' ★', valor: estrelas.filter((e) => e === n).length })), estrelas.length)}
+      </section>
+      <section>
+        <h2>Onde clicaram sem obter resposta</h2>
+        <p class="ajuda">Cada clique em algo que não reage. É o mapa de onde o lojista procura ajuda antes de achar o “?”.</p>
+        ${Object.keys(mortos).length
+          ? barras(Object.entries(mortos).sort((a, b) => b[1] - a[1]).slice(0, 8)
+              .map(([k, v]) => ({ rotulo: k.length > 28 ? k.slice(0, 27) + '…' : k, valor: v })))
+          : '<p class="ajuda">ninguém clicou fora — bom sinal</p>'}
+      </section>
+    </div>
+
+    <section>
+      <h2>Tarefa escolhida no primeiro passo</h2>
+      <p class="ajuda">Se a tarefa certa estiver quase sempre atrás do “Ver mais”, a ordem do catálogo está errada.
+        Abriram o “Ver mais”: <b>${visiveis.filter((s) => s.verMais).length} de ${visiveis.length}</b>.</p>
+      ${Object.keys(tarefas).length
+        ? barras(Object.entries(tarefas).sort((a, b) => b[1] - a[1])
+            .map(([k, v]) => ({ rotulo: TAREFAS[k] || k, valor: v })))
+        : '<p class="ajuda">ninguém chegou a escolher</p>'}
+      <p class="frase">Relato com mediana de <b>${mediana(visiveis.map((s) => s.relato).filter((n) => n > 0)) || '—'} caracteres</b> ·
+        barrados por campo faltando: <b>${visiveis.filter((s) => s.barrado).length}</b></p>
+    </section>
+
+    <section class="sessoes">
+      <h2>Sessão a sessão</h2>
+      <p class="ajuda">Clique em “assistir” para ver a gravação da tela reconstruída.</p>
+      <table>
+        <thead><tr>
+          <th>Quando</th><th class="n">Duração</th><th class="n">Achou em</th>
+          <th>Chamado</th><th class="n">★</th><th class="n">NPS</th><th>Comentário</th><th></th>
+        </tr></thead>
+        <tbody>
+          ${visiveis.map((s) => `<tr>
+            <td><span class="marca-status"><span class="ponto" style="background:${s.nps === null ? 'var(--ruim)' : (s.convites ? 'var(--meio)' : 'var(--bom)')}"></span>${quando(s.quando)}</span></td>
+            <td class="n num">${tempo(s.duracao)}</td>
+            <td class="n num">${s.segundosAteAjuda == null ? 'não achou' : tempo(s.segundosAteAjuda) + (s.convites ? ' *' : '')}</td>
+            <td>${s.protocolo || '—'}</td>
+            <td class="n num">${s.estrelas || '—'}</td>
+            <td class="n num">${s.nps === null ? '—' : s.nps}</td>
+            <td title="${(s.comentario || '').replace(/"/g, '&quot;')}">${s.comentario ? (s.comentario.length > 34 ? s.comentario.slice(0, 33) + '…' : s.comentario) : '—'}</td>
+            <td><a href="player.html?f=${PASTA}/${s.arquivo}" target="_blank" rel="noopener">assistir</a></td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+      <p class="frase">O <b>*</b> marca quem só achou depois da dica do teste. O ponto é verde quando a pessoa
+        terminou sem ajuda, amarelo quando precisou de dica e vermelho quando abandonou.</p>
+    </section>
+  `;
+}
+
+function quando(iso) {
+  if (!iso) return '—';
+  const d = new Date(iso);
+  return d.toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+}
+function haQuanto(iso) {
+  if (!iso) return 'agora';
+  const min = Math.round((Date.now() - new Date(iso).getTime()) / 60000);
+  if (min < 1) return 'agora mesmo';
+  if (min < 60) return 'há ' + min + ' min';
+  const h = Math.round(min / 60);
+  if (h < 24) return 'há ' + h + 'h';
+  return 'há ' + Math.round(h / 24) + ' dias';
+}
+
+/* ── Chegada de sessão nova ───────────────────────────────────────────── */
+
+function avisarNovas(lista) {
+  const reais = lista.filter((s) => s.real);
+  const novas = reais.filter((s) => !jaVistas.has(s.id));
+  reais.forEach((s) => jaVistas.add(s.id));
+  if (!novas.length || !avisarLigado) return;
+  if (!('Notification' in window) || Notification.permission !== 'granted') return;
+  const n = novas.length;
+  new Notification(n === 1 ? 'Chegou uma resposta do teste' : 'Chegaram ' + n + ' respostas do teste', {
+    body: n === 1
+      ? (novas[0].nps === null ? 'Sessão abandonada — vale assistir' : 'Nota ' + novas[0].nps + ' · ' + novas[0].estrelas + '★')
+      : 'Abra o painel para ver',
+    tag: 'teste-preciso-de-ajuda',
+  });
+}
+
+document.getElementById('btn-avisar').addEventListener('click', async () => {
+  if (!('Notification' in window)) { alert('Este navegador não tem avisos de área de trabalho.'); return; }
+  const p = Notification.permission === 'granted' ? 'granted' : await Notification.requestPermission();
+  avisarLigado = p === 'granted';
+  const b = document.getElementById('btn-avisar');
+  b.classList.toggle('on', avisarLigado);
+  b.textContent = avisarLigado ? 'Avisando' : 'Avisar quando chegar';
+  if (avisarLigado) b.prepend(Object.assign(document.createElement('span'), { className: 'pisca' }));
+});
+
+document.getElementById('btn-testes').addEventListener('click', () => {
+  mostrarTestes = !mostrarTestes;
+  const b = document.getElementById('btn-testes');
+  b.classList.toggle('on', mostrarTestes);
+  b.textContent = mostrarTestes ? 'Ocultar testes internos' : 'Mostrar testes internos';
+  pintar();
+});
+
+document.getElementById('btn-atualizar').addEventListener('click', () => atualizar(true));
+
+async function atualizar(manual) {
+  const botao = document.getElementById('btn-atualizar');
+  botao.disabled = true;
+  botao.textContent = 'Atualizando…';
+  try {
+    sessoes = await buscar();
+    avisarNovas(sessoes);
+    pintar();
+  } catch (e) {
+    if (manual || !sessoes.length) {
+      document.getElementById('painel').innerHTML = '<div class="aviso">' + (
+        e.message === 'limite-de-chamadas'
+          ? '<b>O GitHub limitou as chamadas desta rede</b> (60 por hora sem autenticação). As sessões já lidas ficam guardadas aqui no navegador; tente de novo daqui a pouco.'
+          : '<b>Não consegui ler as sessões.</b> ' + e.message
+      ) + '</div>';
+    }
+  } finally {
+    botao.disabled = false;
+    botao.textContent = 'Atualizar';
+  }
+}
+
+atualizar(false);
+setInterval(() => atualizar(false), INTERVALO_MS);
+</script>
+</body>
+</html>
