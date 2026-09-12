@@ -1089,7 +1089,7 @@ function irPara(fase) {
    O envio é text/plain de propósito: é o único Content-Type que o navegador
    trata como requisição simples. Com qualquer outro ele dispara um preflight
    OPTIONS, que o Apps Script não responde — e nada chegaria. */
-const ENDPOINT_PADRAO = 'https://script.google.com/macros/s/AKfycbyzffpLhylKBt5vENgIoP_28cSOXJpeuSkjCfdkg3H4kBfgZrIOwq2nPh24n6DzPrsu/exec';
+const ENDPOINT_PADRAO = 'https://automation.pigz.com.br/webhook/teste-preciso-de-ajuda';
 const ENDPOINT = new URLSearchParams(location.search).get('api') || ENDPOINT_PADRAO;
 
 let ultimoEnvio = null;
