@@ -7,163 +7,197 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap">
 <style>
-  /* Painel operacional: é olhado e operado, não lido de cima a baixo. Resumo
-     antes do detalhe, e estado na forma além da cor.
+  /* ══════════════════════════════════════════════════════════════════════
+     Mesma linguagem da tela "Detalhes da avaliação" do Feedback, transcrita
+     de AdministrativeSupportPage/components/Tabs/SurveyDetail/styles.ts:
+     cartão branco de 16px com filete #F0F0F0, título de 12px em #676767,
+     número de 40px com letter-spacing -1px, donut de 90px com recorte de 68%
+     e a faixa de funil discreta embaixo.
 
-     Cores de status vêm do próprio Partner (#00AB50 / #EBA417 / #CC221F). O
-     validador aponta separação CVD de ΔE 6.0 entre verde e amarelo para
-     protanopia — banda que só é legal com codificação secundária. Por isso
-     TODO segmento carrega rótulo e número, há folga de 2px entre eles, e a
-     mesma informação existe em tabela logo abaixo. */
+     Tema claro só, como a tela original — mas com toda cor declarada, para a
+     página não pegar emprestado o fundo de ninguém.
+
+     As três cores de status (#00AB50 / #EBA417 / #CC221F) são as do donut do
+     produto. O validador de paleta aponta separação de ΔE 6,0 entre verde e
+     amarelo em protanopia: banda que só vale com codificação secundária, e
+     por isso cada fatia tem nome e número na legenda, e existe a mesma
+     informação em tabela.
+     ══════════════════════════════════════════════════════════════════════ */
   :root {
     color-scheme: light;
-    --bg:#F2F2F4; --card:#FFFFFF; --linha:#E8E8EA;
-    --ink:#212121; --ink2:#616161; --ink3:#8C8C8C;
-    --marca:#FA641E; --marca-fraca:#FDE8DF;
-    --bom:#00AB50; --meio:#EBA417; --ruim:#CC221F;
-    --grade:#F0F0F2;
+    --fundo:#F2F2F4;
+    --card:#FFFFFF;
+    --filete:#F0F0F0;
+    --corpo:#333333;       /* BODY_TEXT */
+    --secundario:#676767;  /* SECONDARY_TEXT */
+    --tinta:#212121;
+    --apagado:#BDBDBD;
+    --trilho:#F0F0F2;
+    --marca:#FA641E;
+    --verde:#00AB50;
+    --verde-forte:#008940;
+    --amarelo:#EBA417;
+    --vermelho:#CC221F;
+    --roxo:#6366F1;
   }
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) {
-      color-scheme: dark;
-      --bg:#141518; --card:#1C1D21; --linha:#2A2C31;
-      --ink:#EDEEF0; --ink2:#A8ABB2; --ink3:#7A7E86;
-      --marca:#FF7A3D; --marca-fraca:#3A2113;
-      --bom:#3ECC7F; --meio:#F0B84A; --ruim:#F06A63;
-      --grade:#25272C;
-    }
-  }
-  :root[data-theme="dark"] {
-    color-scheme: dark;
-    --bg:#141518; --card:#1C1D21; --linha:#2A2C31;
-    --ink:#EDEEF0; --ink2:#A8ABB2; --ink3:#7A7E86;
-    --marca:#FF7A3D; --marca-fraca:#3A2113;
-    --bom:#3ECC7F; --meio:#F0B84A; --ruim:#F06A63;
-    --grade:#25272C;
-  }
-
-  * { box-sizing: border-box; }
+  * { box-sizing:border-box; }
   body {
-    margin:0; background:var(--bg); color:var(--ink);
-    font-family:Poppins,system-ui,-apple-system,sans-serif; font-size:14px;
+    margin:0; background:var(--fundo); color:var(--corpo);
+    font-family:Poppins,system-ui,-apple-system,sans-serif;
     -webkit-font-smoothing:antialiased;
   }
-  .num { font-variant-numeric: tabular-nums; }
+  .num { font-variant-numeric:tabular-nums; }
 
-  header {
-    position:sticky; top:0; z-index:10;
-    display:flex; align-items:center; gap:16px; flex-wrap:wrap;
-    padding:16px 24px; background:var(--card); border-bottom:1px solid var(--linha);
-  }
-  header h1 { font-size:16px; font-weight:600; margin:0; }
-  header .sub { font-size:12.5px; color:var(--ink2); }
-  header .espaco { flex:1; }
+  /* ── Cabeçalho ─────────────────────────────────────────────────────── */
+  .topo { display:flex; align-items:center; gap:16px; width:100%; padding:12px 24px; flex-wrap:wrap; }
+  .topo .textos { display:flex; flex:1; flex-direction:column; align-items:flex-start; gap:4px; min-width:0; }
+  .migalha { display:flex; align-items:center; gap:8px; font-size:12px; line-height:18px; color:var(--secundario); }
+  .migalha b { color:var(--corpo); font-weight:500; }
+  h1 { font-weight:500; font-size:20px; line-height:28px; color:var(--corpo); margin:0; }
   .btn {
-    height:34px; padding:0 14px; border-radius:8px; cursor:pointer;
-    background:var(--card); color:var(--ink); border:1px solid var(--linha);
-    font-family:inherit; font-size:13px; display:inline-flex; align-items:center; gap:7px;
+    display:inline-flex; align-items:center; justify-content:center; gap:7px;
+    height:40px; flex-shrink:0; padding:0 16px; border:none; border-radius:8px;
+    font-family:Poppins; font-weight:600; font-size:12px; line-height:16px; cursor:pointer;
+    transition:background-color .16s ease, opacity .16s ease;
+    background:var(--card); color:var(--secundario);
   }
-  .btn:hover { border-color:var(--ink3); }
-  .btn.on { background:var(--marca); border-color:var(--marca); color:#fff; }
+  .btn:hover { background:#F5F5F5; }
+  .btn.primario { background:var(--verde-forte); color:#fff; }
+  .btn.primario:hover { background:#006730; }
+  .btn.ligado { background:var(--marca); color:#fff; }
   .btn:disabled { opacity:.55; cursor:default; }
-  .pisca { width:7px; height:7px; border-radius:50%; background:var(--bom); }
+  .pulso { width:7px; height:7px; border-radius:50%; background:#fff; }
 
-  main { max-width:1180px; margin:0 auto; padding:24px 24px 72px; display:flex; flex-direction:column; gap:24px; }
+  main { display:flex; flex-direction:column; gap:16px; width:100%; padding:0 24px 32px; max-width:1280px; margin:0 auto; }
 
-  .tiles { display:grid; grid-template-columns:repeat(auto-fit,minmax(178px,1fr)); gap:14px; }
-  .tile { background:var(--card); border-radius:12px; padding:16px 18px; }
-  .tile .rot { font-size:12px; color:var(--ink2); }
-  .tile .big { font-size:30px; font-weight:600; line-height:1.15; margin-top:6px; }
-  .tile .pe { font-size:12px; color:var(--ink3); margin-top:3px; }
-  .tile.destaque { box-shadow: inset 3px 0 0 var(--marca); }
+  /* ── KPIs ──────────────────────────────────────────────────────────── */
+  .kpis { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:16px; width:100%; }
+  .kpi {
+    display:flex; flex-direction:column; gap:10px; min-height:132px; padding:20px;
+    border:1px solid var(--filete); border-radius:16px; background:var(--card);
+  }
+  .kpi-cab { display:flex; align-items:center; justify-content:space-between; gap:20px; }
+  .kpi-tit { font-weight:500; font-size:12px; line-height:18px; color:var(--secundario); }
+  .info {
+    width:16px; height:16px; flex:none; border-radius:50%; border:1px solid #E0E0E0;
+    color:var(--apagado); font-size:10px; line-height:14px; text-align:center; cursor:help;
+  }
+  .kpi-corpo { display:flex; flex:1; align-items:center; gap:12px; min-width:0; }
+  .kpi-bloco { display:flex; flex:1 1 70px; flex-direction:column; min-width:70px; }
+  .grande { font-weight:600; font-size:40px; line-height:48px; letter-spacing:-1px; color:var(--tinta); }
+  .grande.verde { color:var(--verde); }
+  .pe { display:flex; align-items:center; gap:4px; padding-top:6px; font-size:11px; line-height:16.5px; color:var(--secundario); }
 
-  section { background:var(--card); border-radius:12px; padding:20px 22px; }
-  section > h2 { font-size:14px; font-weight:600; margin:0 0 4px; }
-  section > .ajuda { font-size:12.5px; line-height:19px; color:var(--ink2); margin:0 0 18px; }
-  .duas { display:grid; grid-template-columns:1fr 1fr; gap:24px; }
-  @media (max-width:860px){ .duas { grid-template-columns:1fr; } }
+  .legenda { display:flex; flex:1 1 auto; flex-direction:column; gap:4px; min-width:0; font-size:11px; line-height:16.5px; color:var(--secundario); }
+  .legenda .l { display:flex; align-items:center; gap:5px; min-width:0; white-space:nowrap; }
+  .legenda .p { width:8px; height:8px; flex-shrink:0; border-radius:4px; }
+  .legenda .v { font-weight:600; color:var(--tinta); }
 
-  /* Barra empilhada com rótulo em cada segmento — a codificação secundária
-     que a separação CVD exige. */
-  .pilha { display:flex; gap:2px; height:34px; border-radius:6px; overflow:hidden; }
-  .pilha span { display:flex; align-items:center; justify-content:center; min-width:2px;
-                font-size:12px; font-weight:600; color:#fff; }
-  .legenda { display:flex; gap:16px; flex-wrap:wrap; margin-top:12px; font-size:12.5px; color:var(--ink2); }
-  .legenda i { width:9px; height:9px; border-radius:2px; display:inline-block; margin-right:6px; }
+  .estrelas-linha { display:flex; align-items:center; gap:2px; }
+  .estrelas-linha svg { width:18px; height:18px; }
 
-  /* Magnitude: uma série, uma cor, sem legenda — o título já a nomeia. */
-  .barras { display:flex; flex-direction:column; gap:9px; }
-  .barra { display:grid; grid-template-columns:minmax(88px,auto) 1fr 42px; gap:12px; align-items:center; font-size:12.5px; }
-  .barra .trilho { background:var(--grade); border-radius:4px; height:16px; overflow:hidden; }
+  /* ── Funil ─────────────────────────────────────────────────────────── */
+  .funil {
+    display:flex; align-items:center; flex-wrap:wrap; gap:8px 14px;
+    padding:12px 16px; width:100%; background:var(--card); border-radius:12px;
+  }
+  .funil .item { display:flex; align-items:baseline; gap:6px; }
+  .funil .valor { font-weight:600; font-size:14px; color:var(--corpo); }
+  .funil .pct { font-size:11px; color:var(--secundario); }
+  .funil .rot { font-size:12px; color:var(--secundario); }
+  .funil .seta { font-size:12px; color:var(--apagado); }
+
+  /* ── Cartões de resultado ──────────────────────────────────────────── */
+  .cartoes { display:flex; align-items:stretch; flex-wrap:wrap; gap:16px; width:100%; }
+  .cartao {
+    display:flex; flex:1 1 440px; flex-direction:column; min-width:0; padding:20px;
+    border:0.7px solid var(--filete); border-radius:16px; background:var(--card);
+  }
+  .cartao.inteiro { flex-basis:100%; }
+  .selo { padding:2px 8px; border-radius:999px; font-weight:500; font-size:11px; line-height:16.5px; align-self:flex-start; }
+  .cartao h2 { padding-top:8px; font-weight:500; font-size:14px; line-height:21px; color:var(--corpo); margin:0; }
+  .cartao .apoio { font-size:11px; line-height:16.5px; color:var(--secundario); margin:6px 0 0; }
+  .cartao .conteudo { margin-top:18px; }
+
+  .barras { display:flex; flex-direction:column; gap:10px; }
+  .barra { display:grid; grid-template-columns:minmax(78px,auto) 1fr 36px; gap:12px; align-items:center; font-size:12px; }
+  .barra .rot { color:var(--corpo); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .barra .trilho { background:var(--trilho); border-radius:4px; height:14px; overflow:hidden; }
   .barra .vale { height:100%; background:var(--marca); border-radius:0 4px 4px 0; min-width:2px; transition:width .25s ease; }
-  .barra .qtd { text-align:right; color:var(--ink2); }
-  .barra .rot { color:var(--ink); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .barra .qtd { text-align:right; color:var(--secundario); }
 
-  details.tabela { margin-top:16px; }
-  details.tabela summary { font-size:12.5px; color:var(--ink2); cursor:pointer; }
-  table { width:100%; border-collapse:collapse; margin-top:10px; font-size:12.5px; }
-  th, td { text-align:left; padding:7px 8px; border-bottom:1px solid var(--linha); white-space:nowrap; }
-  th { font-weight:500; color:var(--ink3); font-size:11px; text-transform:uppercase; letter-spacing:.04em; }
-  td.n { text-align:right; }
+  details { margin-top:16px; }
+  summary { font-size:11px; line-height:16.5px; color:var(--secundario); cursor:pointer; }
+  table { width:100%; border-collapse:collapse; margin-top:10px; font-size:12px; }
+  th, td { text-align:left; padding:8px; border-bottom:1px solid var(--filete); white-space:nowrap; }
+  th { font-weight:500; color:var(--secundario); font-size:11px; }
+  td.n, th.n { text-align:right; }
+  .rolar { overflow-x:auto; }
+  .rolar table { min-width:780px; }
+  a { color:var(--marca); text-decoration:none; font-weight:500; }
+  a:hover { text-decoration:underline; }
+  .ponto { width:8px; height:8px; border-radius:50%; flex:none; display:inline-block; margin-right:7px; vertical-align:middle; }
 
-  .sessoes { overflow-x:auto; }
-  .sessoes table { min-width:760px; }
-  .sessoes a { color:var(--marca); text-decoration:none; }
-  .sessoes a:hover { text-decoration:underline; }
-  .marca-status { display:inline-flex; align-items:center; gap:6px; }
-  .ponto { width:8px; height:8px; border-radius:50%; flex:none; }
+  .vazio { padding:24px; border:1px solid var(--filete); border-radius:16px; background:var(--card); color:var(--secundario); font-size:13px; line-height:21px; }
+  .vazio b { color:var(--corpo); }
 
-  .aviso { background:var(--card); border-radius:12px; padding:20px 22px; color:var(--ink2); line-height:21px; }
-  .aviso b { color:var(--ink); }
-  .frase { font-size:13px; line-height:21px; color:var(--ink2); margin:14px 0 0; }
-  .frase b { color:var(--ink); font-weight:600; }
+  /* Donut: mesmo desenho do NpsDonut — 90px, recorte de 68%, com a dica em
+     HTML por cima (dentro do canvas ela sairia cortada). */
+  .donut { position:relative; width:90px; height:90px; flex-shrink:0; }
+  .donut svg { transform:rotate(-90deg); }
+  .donut circle { fill:none; stroke-width:14.4; transition:opacity .15s ease; }
+  .donut:hover circle { opacity:.45; }
+  .donut circle:hover { opacity:1; }
+  .dica {
+    position:absolute; left:50%; bottom:100%; z-index:50; margin-bottom:6px;
+    transform:translateX(-50%); padding:4px 8px; border-radius:6px;
+    background:rgba(33,33,33,.92); white-space:nowrap; pointer-events:none;
+    font-weight:500; font-size:11px; line-height:16px; color:#fff;
+  }
 </style>
 </head>
 <body>
 
-<header>
-  <div>
-    <h1>Resultados do teste do Preciso de Ajuda</h1>
-    <div class="sub" id="resumo-topo">carregando…</div>
+<div class="topo">
+  <div class="textos">
+    <div class="migalha"><span>Usabilidade</span><span>›</span><b>Preciso de ajuda</b></div>
+    <h1>Resultados do teste de usabilidade</h1>
   </div>
-  <span class="espaco"></span>
-  <button class="btn" id="btn-avisar" type="button" title="Aviso do navegador quando entrar uma sessão nova">Avisar quando chegar</button>
   <button class="btn" id="btn-testes" type="button">Mostrar testes internos</button>
-  <button class="btn" id="btn-atualizar" type="button">Atualizar</button>
-</header>
+  <button class="btn" id="btn-avisar" type="button" title="Aviso do sistema quando entrar uma sessão nova">Avisar quando chegar</button>
+  <button class="btn primario" id="btn-atualizar" type="button">Atualizar</button>
+</div>
 
 <main id="painel">
-  <div class="aviso" id="estado">Buscando as sessões no repositório…</div>
+  <div class="vazio">Buscando as sessões no repositório…</div>
 </main>
 
 <script>
-/* ═══════════════════════════════════════════════════════════════════════
-   As sessões moram em respostas/ neste repositório. O painel lê pela API
+/* As sessões moram em respostas/ neste repositório e são lidas pela API
    pública do GitHub — sem token, porque o repositório é público.
 
    O .json de cada sessão carrega o replay inteiro (centenas de KB). Baixar
-   tudo a cada visita seria lento e gastaria o limite de 60 chamadas por hora,
-   então cada arquivo é lido UMA vez e o que fica guardado no navegador é só o
-   resumo extraído — nunca o replay. A chave é o sha do arquivo: se o conteúdo
-   mudar, o sha muda e ele é lido de novo.
-   ═══════════════════════════════════════════════════════════════════════ */
+   tudo a cada visita seria lento e queimaria o limite de 60 chamadas por
+   hora, então cada arquivo é lido UMA vez e o navegador guarda só o resumo
+   extraído — nunca o replay. A chave é o sha: mudou o conteúdo, muda o sha e
+   ele é lido de novo. */
 const REPO = 'orangebr/teste-preciso-de-ajuda';
 const PASTA = 'respostas';
 const API = 'https://api.github.com/repos/' + REPO + '/contents/' + PASTA;
-const CACHE = 'resultados-teste-v1';
+const CACHE = 'resultados-teste-v2';
 const INTERVALO_MS = 60000;
 
 const cache = carregarCache();
 let sessoes = [];
 let mostrarTestes = false;
-let jaVistas = new Set();
+const jaVistas = new Set();
 let avisarLigado = false;
 
 function carregarCache() {
   try { return JSON.parse(localStorage.getItem(CACHE) || '{}'); } catch (e) { return {}; }
 }
 function salvarCache() {
-  try { localStorage.setItem(CACHE, JSON.stringify(cache)); } catch (e) { /* modo privado */ }
+  try { localStorage.setItem(CACHE, JSON.stringify(cache)); } catch (e) { /* janela privada */ }
 }
 
 /* ── Leitura ──────────────────────────────────────────────────────────── */
@@ -179,34 +213,30 @@ async function buscar() {
     if (cache[f.sha]) { lidas.push(cache[f.sha]); continue; }
     try {
       const bruto = await fetch(f.download_url, { cache: 'no-store' }).then((x) => x.json());
-      const resumo = resumir(bruto, f.name);
-      cache[f.sha] = resumo;
-      lidas.push(resumo);
-    } catch (e) { /* arquivo corrompido ou pela metade: ignora e segue */ }
+      cache[f.sha] = resumir(bruto, f.name);
+      lidas.push(cache[f.sha]);
+    } catch (e) { /* arquivo pela metade: ignora e segue */ }
   }
   salvarCache();
   lidas.sort((a, b) => (b.quando || '').localeCompare(a.quando || ''));
   return lidas;
 }
 
-/** Só o que o painel precisa. O replay fica de fora de propósito. */
 function resumir(bruto, arquivo) {
   const d = bruto.dados || {};
   const f = d.form || {};
   const draft = d.draft || {};
   const marcos = Array.isArray(d.marcos) ? d.marcos : [];
   const abriu = marcos.find((m) => m.evento === 'abriu-ajuda');
-  const mortos = marcos.filter((m) => m.evento === 'clique-sem-resposta').map((m) => m.detalhe).filter(Boolean);
 
   return {
     id: bruto.sessionId || d.sessionId || arquivo,
-    arquivo: arquivo,
-    /* Uma sessão de verdade tem linha do tempo; os disparos de fumaça do
+    arquivo,
+    /* Sessão de verdade tem linha do tempo; os disparos de fumaça do
        desenvolvimento chegam com `dados` vazio. */
     real: marcos.length > 0,
     quando: d.abertoEm || '',
     duracao: d.duracaoTotalSegundos || 0,
-    cliques: d.cliques || 0,
     segundosAteAjuda: abriu ? abriu.emSegundos : null,
     convites: (d.convites || []).length,
     protocolo: d.protocolo || null,
@@ -218,12 +248,11 @@ function resumir(bruto, arquivo) {
     comentario: (f.comentario || '').trim(),
     verMais: Boolean(d.verMaisAberto),
     barrado: (d.barradoEm || []).length,
-    cliquesMortos: mortos,
-    janela: d.janela || '',
+    cliquesMortos: marcos.filter((m) => m.evento === 'clique-sem-resposta').map((m) => m.detalhe).filter(Boolean),
   };
 }
 
-/* ── Números ──────────────────────────────────────────────────────────── */
+/* ── Contas ───────────────────────────────────────────────────────────── */
 
 const mediana = (lista) => {
   const v = lista.filter((x) => typeof x === 'number').sort((a, b) => a - b);
@@ -234,6 +263,7 @@ const mediana = (lista) => {
 const pct = (parte, todo) => (todo ? Math.round((parte / todo) * 100) : 0);
 const tempo = (s) => (s == null ? '—' : (s < 60 ? Math.round(s) + 's' : Math.floor(s / 60) + 'min ' + String(Math.round(s % 60)).padStart(2, '0') + 's'));
 const contar = (lista) => lista.reduce((m, x) => (m[x] = (m[x] || 0) + 1, m), {});
+const escapar = (t) => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
 
 const TAREFAS = {
   pedido:'Problemas com pedido', produto:'Produto ou cardápio', caixa:'Abrir ou fechar caixa',
@@ -242,202 +272,259 @@ const TAREFAS = {
   dados:'Dados da loja', visibilidade:'Cliente não acha a loja', naosei:'Não sei dizer',
 };
 
-/* ── Desenho ──────────────────────────────────────────────────────────── */
+/* ── Peças ────────────────────────────────────────────────────────────── */
 
-function barras(itens, total) {
-  const maior = Math.max(1, ...itens.map((i) => i.valor));
-  return '<div class="barras">' + itens.map((i) =>
-    '<div class="barra" title="' + i.rotulo + ': ' + i.valor + (total ? ' de ' + total : '') + '">' +
-      '<span class="rot">' + i.rotulo + '</span>' +
-      '<span class="trilho"><span class="vale" style="width:' + Math.round((i.valor / maior) * 100) + '%"></span></span>' +
-      '<span class="qtd num">' + i.valor + '</span>' +
-    '</div>').join('') + '</div>';
+/** Donut de 90px com recorte de 68%, como o NpsDonut do produto. A folga de
+    2px entre fatias é o espaçador que separa cores vizinhas. */
+function donut(fatias) {
+  const total = fatias.reduce((s, f) => s + f.valor, 0);
+  if (!total) return '<div class="donut"></div>';
+  const r = 37.8, circ = 2 * Math.PI * r;
+  let offset = 0;
+  const arcos = fatias.filter((f) => f.valor > 0).map((f) => {
+    const parte = (f.valor / total) * circ;
+    const traco = Math.max(parte - 2, 0.5);
+    const c = '<circle cx="45" cy="45" r="' + r + '" stroke="' + f.cor + '"' +
+      ' stroke-dasharray="' + traco + ' ' + (circ - traco) + '"' +
+      ' stroke-dashoffset="' + (-offset) + '">' +
+      '<title>' + escapar(f.rotulo) + ': ' + f.valor + ' (' + pct(f.valor, total) + '%)</title></circle>';
+    offset += parte;
+    return c;
+  }).join('');
+  return '<div class="donut"><svg viewBox="0 0 90 90" width="90" height="90" role="img" aria-label="' +
+    escapar(fatias.map((f) => f.rotulo + ' ' + f.valor).join(', ')) + '">' + arcos + '</svg></div>';
 }
 
-function pilha(partes) {
-  const total = partes.reduce((s, p) => s + p.valor, 0) || 1;
-  return '<div class="pilha">' + partes.map((p) => {
-    const largura = (p.valor / total) * 100;
-    return '<span style="flex:' + Math.max(p.valor, 0.001) + ';background:' + p.cor + '" title="' + p.rotulo + ': ' + p.valor + '">' +
-      (largura > 11 ? p.valor : '') + '</span>';
-  }).join('') + '</div>' +
-  '<div class="legenda">' + partes.map((p) =>
-    '<span><i style="background:' + p.cor + '"></i>' + p.rotulo + ' <b class="num">' + p.valor + '</b> (' + pct(p.valor, total) + '%)</span>'
-  ).join('') + '</div>';
+function legenda(fatias) {
+  const total = fatias.reduce((s, f) => s + f.valor, 0) || 1;
+  return '<div class="legenda">' + fatias.map((f) =>
+    '<div class="l"><span class="p" style="background:' + f.cor + '"></span>' + f.rotulo +
+    ' <span class="v num">' + pct(f.valor, total) + '%</span></div>').join('') + '</div>';
+}
+
+function estrelasSvg(n) {
+  const estrela = (cheia) => '<svg viewBox="0 0 24 24" fill="' + (cheia ? '#FA641E' : '#E0E0E0') +
+    '" aria-hidden="true"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>';
+  return '<span class="estrelas-linha">' + [1,2,3,4,5].map((i) => estrela(i <= Math.round(n))).join('') + '</span>';
+}
+
+function barras(itens) {
+  const maior = Math.max(1, ...itens.map((i) => i.valor));
+  return '<div class="barras">' + itens.map((i) =>
+    '<div class="barra" title="' + escapar(i.rotulo) + ': ' + i.valor + '">' +
+      '<span class="rot">' + escapar(i.rotulo) + '</span>' +
+      '<span class="trilho"><span class="vale" style="width:' + Math.round((i.valor / maior) * 100) + '%"></span></span>' +
+      '<span class="qtd num">' + i.valor + '</span></div>').join('') + '</div>';
 }
 
 function tabela(cabecalhos, linhas) {
-  return '<details class="tabela"><summary>Ver como tabela</summary><table><thead><tr>' +
+  return '<details><summary>Ver como tabela</summary><table><thead><tr>' +
     cabecalhos.map((c, i) => '<th' + (i ? ' class="n"' : '') + '>' + c + '</th>').join('') +
     '</tr></thead><tbody>' + linhas.map((l) => '<tr>' +
       l.map((c, i) => '<td' + (i ? ' class="n num"' : '') + '>' + c + '</td>').join('') +
     '</tr>').join('') + '</tbody></table></details>';
 }
 
+function cartao(selo, corSelo, titulo, apoio, conteudo, inteiro) {
+  return '<div class="cartao' + (inteiro ? ' inteiro' : '') + '">' +
+    '<span class="selo" style="color:' + corSelo + ';background:' + corSelo + '17">' + selo + '</span>' +
+    '<h2>' + titulo + '</h2>' +
+    (apoio ? '<p class="apoio">' + apoio + '</p>' : '') +
+    '<div class="conteudo">' + conteudo + '</div></div>';
+}
+
+/* ── Desenho ──────────────────────────────────────────────────────────── */
+
 function pintar() {
-  const visiveis = sessoes.filter((s) => mostrarTestes || s.real);
+  const v = sessoes.filter((s) => mostrarTestes || s.real);
   const painel = document.getElementById('painel');
 
-  if (!visiveis.length) {
-    painel.innerHTML = '<div class="aviso"><b>Nenhuma sessão ainda.</b> Assim que um lojista terminar o teste, ' +
+  if (!v.length) {
+    painel.innerHTML = '<div class="vazio"><b>Nenhuma sessão ainda.</b> Assim que um lojista terminar o teste, ' +
       'o arquivo aparece em <code>respostas/</code> e este painel conta sozinho.</div>';
-    document.getElementById('resumo-topo').textContent = 'nenhuma sessão';
     return;
   }
 
-  const concluidas = visiveis.filter((s) => s.nps !== null);
-  const abriramChamado = visiveis.filter((s) => s.protocolo);
-  const acharamSozinhos = visiveis.filter((s) => s.segundosAteAjuda != null && s.convites === 0);
-  const naoAcharam = visiveis.filter((s) => s.segundosAteAjuda == null);
+  const avaliaram = v.filter((s) => s.nps !== null);
+  const abriramChamado = v.filter((s) => s.protocolo);
+  const acharam = v.filter((s) => s.segundosAteAjuda != null);
+  const sozinhos = acharam.filter((s) => s.convites === 0);
+  const comDica = acharam.length - sozinhos.length;
+  const naoAcharam = v.length - acharam.length;
 
-  const nps = concluidas.map((s) => s.nps);
+  const nps = avaliaram.map((s) => s.nps);
   const prom = nps.filter((n) => n >= 9).length;
   const neu = nps.filter((n) => n >= 7 && n <= 8).length;
   const det = nps.filter((n) => n <= 6).length;
-  const npsScore = nps.length ? Math.round(((prom - det) / nps.length) * 100) : null;
+  const npsMedia = nps.length ? (nps.reduce((a, b) => a + b, 0) / nps.length) : null;
 
-  const estrelas = concluidas.map((s) => s.estrelas).filter(Boolean);
-  const mediaEstrelas = estrelas.length ? (estrelas.reduce((a, b) => a + b, 0) / estrelas.length) : null;
+  const estrelas = avaliaram.map((s) => s.estrelas).filter(Boolean);
+  const mediaEstrelas = estrelas.length ? estrelas.reduce((a, b) => a + b, 0) / estrelas.length : null;
+  const conseguiu = contar(avaliaram.map((s) => s.conseguiu).filter(Boolean));
+  const tarefas = contar(v.map((s) => s.tarefa).filter(Boolean));
+  const mortos = contar(v.flatMap((s) => s.cliquesMortos));
 
-  const conseguiu = contar(concluidas.map((s) => s.conseguiu).filter(Boolean));
-  const tarefas = contar(visiveis.map((s) => s.tarefa).filter(Boolean));
-  const mortos = contar(visiveis.flatMap((s) => s.cliquesMortos));
+  const fatiasAjuda = [
+    { rotulo:'Sozinhos', valor:sozinhos.length, cor:'var(--verde)' },
+    { rotulo:'Depois da dica', valor:comDica, cor:'var(--amarelo)' },
+    { rotulo:'Não acharam', valor:naoAcharam, cor:'var(--vermelho)' },
+  ];
+  const fatiasNps = [
+    { rotulo:'Promotores', valor:prom, cor:'var(--verde)' },
+    { rotulo:'Neutros', valor:neu, cor:'var(--amarelo)' },
+    { rotulo:'Detratores', valor:det, cor:'var(--vermelho)' },
+  ];
 
-  const ultima = visiveis[0];
-  document.getElementById('resumo-topo').innerHTML =
-    visiveis.length + ' sessões · última ' + haQuanto(ultima.quando) +
-    ' · <span style="color:var(--ink3)">atualiza sozinho a cada minuto</span>';
+  const funil = [
+    { rot:'Abriram o teste', valor:v.length, pct:100 },
+    { rot:'Acharam a ajuda', valor:acharam.length, pct:pct(acharam.length, v.length) },
+    { rot:'Abriram o chamado', valor:abriramChamado.length, pct:pct(abriramChamado.length, v.length) },
+    { rot:'Avaliaram', valor:avaliaram.length, pct:pct(avaliaram.length, v.length) },
+  ];
 
   painel.innerHTML = `
-    <div class="tiles">
-      <div class="tile destaque">
-        <div class="rot">Sessões</div>
-        <div class="big num">${visiveis.length}</div>
-        <div class="pe">${concluidas.length} responderam a avaliação</div>
+    <div class="kpis">
+      <div class="kpi">
+        <div class="kpi-cab"><span class="kpi-tit">Sessões recebidas</span>
+          <span class="info" title="Cada lojista que abriu o teste e chegou a gerar um arquivo.">i</span></div>
+        <div class="kpi-corpo"><div class="kpi-bloco">
+          <div class="grande num">${v.length}</div>
+          <div class="pe">${avaliaram.length} responderam a avaliação</div>
+        </div></div>
       </div>
-      <div class="tile">
-        <div class="rot">Acharam a ajuda sozinhos</div>
-        <div class="big num">${pct(acharamSozinhos.length, visiveis.length)}%</div>
-        <div class="pe">${acharamSozinhos.length} de ${visiveis.length} · ${naoAcharam.length} não acharam</div>
+
+      <div class="kpi">
+        <div class="kpi-cab"><span class="kpi-tit">Acharam a ajuda</span>
+          <span class="info" title="A pergunta central do teste. Sozinhos = abriram o “?” sem o teste dar nenhuma dica.">i</span></div>
+        <div class="kpi-corpo">
+          <div class="kpi-bloco">
+            <div class="grande num ${sozinhos.length === v.length ? 'verde' : ''}">${pct(sozinhos.length, v.length)}%</div>
+            <div class="pe">sozinhos, sem dica</div>
+          </div>
+          ${donut(fatiasAjuda)}
+          ${legenda(fatiasAjuda)}
+        </div>
       </div>
-      <div class="tile">
-        <div class="rot">Abriram o chamado</div>
-        <div class="big num">${pct(abriramChamado.length, visiveis.length)}%</div>
-        <div class="pe">${abriramChamado.length} de ${visiveis.length} chegaram ao fim do fluxo</div>
+
+      <div class="kpi">
+        <div class="kpi-cab"><span class="kpi-tit">NPS</span>
+          <span class="info" title="Promotores 9–10, neutros 7–8, detratores 0–6.">i</span></div>
+        <div class="kpi-corpo">
+          <div class="kpi-bloco">
+            <div class="grande num ${npsMedia >= 9 ? 'verde' : ''}">${npsMedia === null ? '—' : npsMedia.toFixed(2)}</div>
+            <div class="pe">${nps.length} ${nps.length === 1 ? 'resposta' : 'respostas'}</div>
+          </div>
+          ${nps.length ? donut(fatiasNps) + legenda(fatiasNps) : ''}
+        </div>
       </div>
-      <div class="tile">
-        <div class="rot">Tempo até achar o “?”</div>
-        <div class="big num">${tempo(mediana(visiveis.map((s) => s.segundosAteAjuda)))}</div>
-        <div class="pe">mediana · teste inteiro em ${tempo(mediana(concluidas.map((s) => s.duracao)))}</div>
+
+      <div class="kpi">
+        <div class="kpi-cab"><span class="kpi-tit">Tempo até achar o “?”</span>
+          <span class="info" title="Mediana do tempo entre abrir o teste e abrir a ajuda.">i</span></div>
+        <div class="kpi-corpo"><div class="kpi-bloco">
+          <div class="grande num">${tempo(mediana(v.map((s) => s.segundosAteAjuda)))}</div>
+          <div class="pe">teste inteiro em ${tempo(mediana(avaliaram.map((s) => s.duracao)))}</div>
+        </div></div>
       </div>
-      <div class="tile">
-        <div class="rot">NPS</div>
-        <div class="big num">${npsScore === null ? '—' : npsScore}</div>
-        <div class="pe">${nps.length} respostas · média ${nps.length ? (nps.reduce((a, b) => a + b, 0) / nps.length).toFixed(1) : '—'}</div>
+
+      <div class="kpi">
+        <div class="kpi-cab"><span class="kpi-tit">Satisfação</span>
+          <span class="info" title="“Como foi pedir ajuda nessa tela?”">i</span></div>
+        <div class="kpi-corpo">
+          <div class="kpi-bloco">
+            <div class="grande num">${mediaEstrelas ? mediaEstrelas.toFixed(1) : '—'}</div>
+            <div class="pe">de 5 · ${estrelas.length} ${estrelas.length === 1 ? 'avaliação' : 'avaliações'}</div>
+          </div>
+          ${mediaEstrelas ? estrelasSvg(mediaEstrelas) : ''}
+        </div>
       </div>
-      <div class="tile">
-        <div class="rot">Estrelas</div>
-        <div class="big num">${mediaEstrelas ? mediaEstrelas.toFixed(1) : '—'}</div>
-        <div class="pe">de 5 · ${estrelas.length} avaliações</div>
+
+      <div class="kpi">
+        <div class="kpi-cab"><span class="kpi-tit">Chamados abertos</span>
+          <span class="info" title="Sessões que chegaram ao fim do fluxo e enviaram o chamado.">i</span></div>
+        <div class="kpi-corpo"><div class="kpi-bloco">
+          <div class="grande num">${pct(abriramChamado.length, v.length)}%</div>
+          <div class="pe">${abriramChamado.length} de ${v.length} · relato mediano de ${mediana(v.map((s) => s.relato).filter((n) => n > 0)) || '—'} caracteres</div>
+        </div></div>
       </div>
     </div>
 
-    <section>
-      <h2>Achar a ajuda</h2>
-      <p class="ajuda">É a pergunta principal do teste. “Sozinho” = abriu o “?” sem o teste ter dado
-        nenhuma dica; “depois da dica” = só abriu depois que a pílula piscou; “não achou” = terminou sem abrir.</p>
-      ${pilha([
-        { rotulo:'Sozinho', valor: acharamSozinhos.length, cor:'var(--bom)' },
-        { rotulo:'Depois da dica', valor: visiveis.length - acharamSozinhos.length - naoAcharam.length, cor:'var(--meio)' },
-        { rotulo:'Não achou', valor: naoAcharam.length, cor:'var(--ruim)' },
-      ])}
-      ${tabela(['Situação','Sessões','%'], [
-        ['Sozinho', acharamSozinhos.length, pct(acharamSozinhos.length, visiveis.length) + '%'],
-        ['Depois da dica', visiveis.length - acharamSozinhos.length - naoAcharam.length, pct(visiveis.length - acharamSozinhos.length - naoAcharam.length, visiveis.length) + '%'],
-        ['Não achou', naoAcharam.length, pct(naoAcharam.length, visiveis.length) + '%'],
-      ])}
-    </section>
-
-    <div class="duas">
-      <section>
-        <h2>NPS</h2>
-        <p class="ajuda">Promotores 9–10, neutros 7–8, detratores 0–6.</p>
-        ${nps.length ? pilha([
-          { rotulo:'Promotores', valor: prom, cor:'var(--bom)' },
-          { rotulo:'Neutros', valor: neu, cor:'var(--meio)' },
-          { rotulo:'Detratores', valor: det, cor:'var(--ruim)' },
-        ]) : '<p class="ajuda">sem respostas ainda</p>'}
-      </section>
-      <section>
-        <h2>Conseguiu sozinho?</h2>
-        <p class="ajuda">O que a pessoa disse, depois de fazer.</p>
-        ${concluidas.length ? pilha([
-          { rotulo:'Sim, sozinho', valor: conseguiu.sozinho || 0, cor:'var(--bom)' },
-          { rotulo:'Travei em algum ponto', valor: conseguiu.travei || 0, cor:'var(--meio)' },
-          { rotulo:'Não consegui', valor: conseguiu.nao || 0, cor:'var(--ruim)' },
-        ]) : '<p class="ajuda">sem respostas ainda</p>'}
-      </section>
+    <div class="funil">
+      ${funil.map((f, i) => (i ? '<span class="seta">→</span>' : '') +
+        '<div class="item"><span class="valor num">' + f.valor + '</span>' +
+        '<span class="pct num">(' + f.pct + '%)</span>' +
+        '<span class="rot">' + f.rot + '</span></div>').join('')}
     </div>
 
-    <div class="duas">
-      <section>
-        <h2>Estrelas</h2>
-        <p class="ajuda">“Como foi pedir ajuda nessa tela?”</p>
-        ${barras([5,4,3,2,1].map((n) => ({ rotulo: n + ' ★', valor: estrelas.filter((e) => e === n).length })), estrelas.length)}
-      </section>
-      <section>
-        <h2>Onde clicaram sem obter resposta</h2>
-        <p class="ajuda">Cada clique em algo que não reage. É o mapa de onde o lojista procura ajuda antes de achar o “?”.</p>
-        ${Object.keys(mortos).length
+    <div class="cartoes">
+      ${cartao('Estrelas', '#FA641E', 'Como foi pedir ajuda nessa tela?',
+        'Distribuição das notas de 1 a 5.',
+        barras([5,4,3,2,1].map((n) => ({ rotulo:n + ' estrela' + (n > 1 ? 's' : ''), valor:estrelas.filter((e) => e === n).length }))) +
+        tabela(['Nota','Sessões','%'], [5,4,3,2,1].map((n) => {
+          const q = estrelas.filter((e) => e === n).length;
+          return [n + ' ★', q, pct(q, estrelas.length) + '%'];
+        })))}
+
+      ${cartao('Escolha única', '#6366F1', 'Você conseguiu avisar o problema sozinho?',
+        'O que a pessoa disse, depois de fazer.',
+        (avaliaram.length
+          ? '<div class="kpi-corpo">' + donut([
+              { rotulo:'Sim, sozinho', valor:conseguiu.sozinho || 0, cor:'var(--verde)' },
+              { rotulo:'Travei em algum ponto', valor:conseguiu.travei || 0, cor:'var(--amarelo)' },
+              { rotulo:'Não consegui', valor:conseguiu.nao || 0, cor:'var(--vermelho)' },
+            ]) + legenda([
+              { rotulo:'Sim, sozinho', valor:conseguiu.sozinho || 0, cor:'var(--verde)' },
+              { rotulo:'Travei em algum ponto', valor:conseguiu.travei || 0, cor:'var(--amarelo)' },
+              { rotulo:'Não consegui', valor:conseguiu.nao || 0, cor:'var(--vermelho)' },
+            ]) + '</div>'
+          : '<p class="apoio">sem respostas ainda</p>') +
+        tabela(['Resposta','Sessões'], [
+          ['Sim, sozinho', conseguiu.sozinho || 0],
+          ['Travei em algum ponto', conseguiu.travei || 0],
+          ['Não consegui', conseguiu.nao || 0],
+        ]))}
+
+      ${cartao('Comportamento', '#00AB50', 'Onde clicaram sem obter resposta',
+        'Cada clique em algo que não reage — o mapa de onde o lojista procura ajuda antes de achar o “?”.',
+        Object.keys(mortos).length
           ? barras(Object.entries(mortos).sort((a, b) => b[1] - a[1]).slice(0, 8)
-              .map(([k, v]) => ({ rotulo: k.length > 28 ? k.slice(0, 27) + '…' : k, valor: v })))
-          : '<p class="ajuda">ninguém clicou fora — bom sinal</p>'}
-      </section>
+              .map(([k, q]) => ({ rotulo:k.length > 30 ? k.slice(0, 29) + '…' : k, valor:q })))
+          : '<p class="apoio">ninguém clicou fora — bom sinal</p>')}
+
+      ${cartao('Comportamento', '#00AB50', 'Tarefa escolhida no primeiro passo',
+        'Se a tarefa certa estiver quase sempre atrás do “Ver mais”, a ordem do catálogo está errada. ' +
+        'Abriram o “Ver mais”: <b>' + v.filter((s) => s.verMais).length + ' de ' + v.length + '</b>. ' +
+        'Barrados por campo faltando: <b>' + v.filter((s) => s.barrado).length + '</b>.',
+        Object.keys(tarefas).length
+          ? barras(Object.entries(tarefas).sort((a, b) => b[1] - a[1]).map(([k, q]) => ({ rotulo:TAREFAS[k] || k, valor:q })))
+          : '<p class="apoio">ninguém chegou a escolher</p>')}
+
+      ${cartao('Respostas', '#676767', 'Sessão a sessão',
+        'O ponto é verde quando a pessoa terminou sem ajuda, amarelo quando precisou de dica e vermelho quando abandonou. ' +
+        'O <b>*</b> marca quem só achou o “?” depois da dica.',
+        '<div class="rolar"><table><thead><tr>' +
+          '<th>Quando</th><th class="n">Duração</th><th class="n">Achou em</th><th>Chamado</th>' +
+          '<th class="n">★</th><th class="n">NPS</th><th>Comentário</th><th></th></tr></thead><tbody>' +
+        v.map((s) => '<tr>' +
+          '<td><span class="ponto" style="background:' + (s.nps === null ? 'var(--vermelho)' : (s.convites ? 'var(--amarelo)' : 'var(--verde)')) + '"></span>' + quando(s.quando) + '</td>' +
+          '<td class="n num">' + tempo(s.duracao) + '</td>' +
+          '<td class="n num">' + (s.segundosAteAjuda == null ? 'não achou' : tempo(s.segundosAteAjuda) + (s.convites ? ' *' : '')) + '</td>' +
+          '<td>' + (s.protocolo || '—') + '</td>' +
+          '<td class="n num">' + (s.estrelas || '—') + '</td>' +
+          '<td class="n num">' + (s.nps === null ? '—' : s.nps) + '</td>' +
+          '<td title="' + escapar(s.comentario) + '">' + (s.comentario ? escapar(s.comentario.length > 36 ? s.comentario.slice(0, 35) + '…' : s.comentario) : '—') + '</td>' +
+          '<td><a href="player.html?f=' + PASTA + '/' + s.arquivo + '" target="_blank" rel="noopener">assistir</a></td>' +
+        '</tr>').join('') + '</tbody></table></div>', true)}
     </div>
-
-    <section>
-      <h2>Tarefa escolhida no primeiro passo</h2>
-      <p class="ajuda">Se a tarefa certa estiver quase sempre atrás do “Ver mais”, a ordem do catálogo está errada.
-        Abriram o “Ver mais”: <b>${visiveis.filter((s) => s.verMais).length} de ${visiveis.length}</b>.</p>
-      ${Object.keys(tarefas).length
-        ? barras(Object.entries(tarefas).sort((a, b) => b[1] - a[1])
-            .map(([k, v]) => ({ rotulo: TAREFAS[k] || k, valor: v })))
-        : '<p class="ajuda">ninguém chegou a escolher</p>'}
-      <p class="frase">Relato com mediana de <b>${mediana(visiveis.map((s) => s.relato).filter((n) => n > 0)) || '—'} caracteres</b> ·
-        barrados por campo faltando: <b>${visiveis.filter((s) => s.barrado).length}</b></p>
-    </section>
-
-    <section class="sessoes">
-      <h2>Sessão a sessão</h2>
-      <p class="ajuda">Clique em “assistir” para ver a gravação da tela reconstruída.</p>
-      <table>
-        <thead><tr>
-          <th>Quando</th><th class="n">Duração</th><th class="n">Achou em</th>
-          <th>Chamado</th><th class="n">★</th><th class="n">NPS</th><th>Comentário</th><th></th>
-        </tr></thead>
-        <tbody>
-          ${visiveis.map((s) => `<tr>
-            <td><span class="marca-status"><span class="ponto" style="background:${s.nps === null ? 'var(--ruim)' : (s.convites ? 'var(--meio)' : 'var(--bom)')}"></span>${quando(s.quando)}</span></td>
-            <td class="n num">${tempo(s.duracao)}</td>
-            <td class="n num">${s.segundosAteAjuda == null ? 'não achou' : tempo(s.segundosAteAjuda) + (s.convites ? ' *' : '')}</td>
-            <td>${s.protocolo || '—'}</td>
-            <td class="n num">${s.estrelas || '—'}</td>
-            <td class="n num">${s.nps === null ? '—' : s.nps}</td>
-            <td title="${(s.comentario || '').replace(/"/g, '&quot;')}">${s.comentario ? (s.comentario.length > 34 ? s.comentario.slice(0, 33) + '…' : s.comentario) : '—'}</td>
-            <td><a href="player.html?f=${PASTA}/${s.arquivo}" target="_blank" rel="noopener">assistir</a></td>
-          </tr>`).join('')}
-        </tbody>
-      </table>
-      <p class="frase">O <b>*</b> marca quem só achou depois da dica do teste. O ponto é verde quando a pessoa
-        terminou sem ajuda, amarelo quando precisou de dica e vermelho quando abandonou.</p>
-    </section>
   `;
+
+  document.querySelector('.migalha b').textContent =
+    'Preciso de ajuda · ' + v.length + ' ' + (v.length === 1 ? 'sessão' : 'sessões') + ' · última ' + haQuanto(v[0].quando);
 }
 
 function quando(iso) {
   if (!iso) return '—';
-  const d = new Date(iso);
-  return d.toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+  return new Date(iso).toLocaleString('pt-BR', { day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit' });
 }
 function haQuanto(iso) {
   if (!iso) return 'agora';
@@ -445,8 +532,7 @@ function haQuanto(iso) {
   if (min < 1) return 'agora mesmo';
   if (min < 60) return 'há ' + min + ' min';
   const h = Math.round(min / 60);
-  if (h < 24) return 'há ' + h + 'h';
-  return 'há ' + Math.round(h / 24) + ' dias';
+  return h < 24 ? 'há ' + h + 'h' : 'há ' + Math.round(h / 24) + ' dias';
 }
 
 /* ── Chegada de sessão nova ───────────────────────────────────────────── */
@@ -457,29 +543,27 @@ function avisarNovas(lista) {
   reais.forEach((s) => jaVistas.add(s.id));
   if (!novas.length || !avisarLigado) return;
   if (!('Notification' in window) || Notification.permission !== 'granted') return;
-  const n = novas.length;
-  new Notification(n === 1 ? 'Chegou uma resposta do teste' : 'Chegaram ' + n + ' respostas do teste', {
-    body: n === 1
-      ? (novas[0].nps === null ? 'Sessão abandonada — vale assistir' : 'Nota ' + novas[0].nps + ' · ' + novas[0].estrelas + '★')
+  new Notification(novas.length === 1 ? 'Chegou uma resposta do teste' : 'Chegaram ' + novas.length + ' respostas', {
+    body: novas.length === 1
+      ? (novas[0].nps === null ? 'Sessão abandonada — vale assistir' : 'NPS ' + novas[0].nps + ' · ' + novas[0].estrelas + ' estrelas')
       : 'Abra o painel para ver',
     tag: 'teste-preciso-de-ajuda',
   });
 }
 
 document.getElementById('btn-avisar').addEventListener('click', async () => {
-  if (!('Notification' in window)) { alert('Este navegador não tem avisos de área de trabalho.'); return; }
+  if (!('Notification' in window)) { alert('Este navegador não tem avisos de sistema.'); return; }
   const p = Notification.permission === 'granted' ? 'granted' : await Notification.requestPermission();
   avisarLigado = p === 'granted';
   const b = document.getElementById('btn-avisar');
-  b.classList.toggle('on', avisarLigado);
-  b.textContent = avisarLigado ? 'Avisando' : 'Avisar quando chegar';
-  if (avisarLigado) b.prepend(Object.assign(document.createElement('span'), { className: 'pisca' }));
+  b.classList.toggle('ligado', avisarLigado);
+  b.innerHTML = avisarLigado ? '<span class="pulso"></span>Avisando' : 'Avisar quando chegar';
 });
 
 document.getElementById('btn-testes').addEventListener('click', () => {
   mostrarTestes = !mostrarTestes;
   const b = document.getElementById('btn-testes');
-  b.classList.toggle('on', mostrarTestes);
+  b.classList.toggle('ligado', mostrarTestes);
   b.textContent = mostrarTestes ? 'Ocultar testes internos' : 'Mostrar testes internos';
   pintar();
 });
@@ -487,24 +571,24 @@ document.getElementById('btn-testes').addEventListener('click', () => {
 document.getElementById('btn-atualizar').addEventListener('click', () => atualizar(true));
 
 async function atualizar(manual) {
-  const botao = document.getElementById('btn-atualizar');
-  botao.disabled = true;
-  botao.textContent = 'Atualizando…';
+  const b = document.getElementById('btn-atualizar');
+  b.disabled = true;
+  b.textContent = 'Atualizando…';
   try {
     sessoes = await buscar();
     avisarNovas(sessoes);
     pintar();
   } catch (e) {
     if (manual || !sessoes.length) {
-      document.getElementById('painel').innerHTML = '<div class="aviso">' + (
+      document.getElementById('painel').innerHTML = '<div class="vazio">' + (
         e.message === 'limite-de-chamadas'
-          ? '<b>O GitHub limitou as chamadas desta rede</b> (60 por hora sem autenticação). As sessões já lidas ficam guardadas aqui no navegador; tente de novo daqui a pouco.'
-          : '<b>Não consegui ler as sessões.</b> ' + e.message
+          ? '<b>O GitHub limitou as chamadas desta rede</b> (60 por hora sem autenticação). As sessões já lidas ficam guardadas neste navegador; tente de novo daqui a pouco.'
+          : '<b>Não consegui ler as sessões.</b> ' + escapar(e.message)
       ) + '</div>';
     }
   } finally {
-    botao.disabled = false;
-    botao.textContent = 'Atualizar';
+    b.disabled = false;
+    b.textContent = 'Atualizar';
   }
 }
 
