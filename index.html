@@ -582,6 +582,33 @@
   .pz-btn.danger:hover { background: var(--r-600); }
   .pz-btn:focus-visible { outline: 2px solid var(--b-500); outline-offset: 2px; }
 
+  /* ── Tela pequena demais ──────────────────────────────────────────────
+     O teste reproduz a tela de Vendas como ela é no computador: doze colunas,
+     um painel lateral de 480px e o "?" no canto superior direito. No celular
+     nada disso cabe, e o que o teste mede — se a pessoa acha a ajuda — viraria
+     medida de outra tela. Melhor não deixar começar. */
+  .lab-bloqueio {
+    position: fixed; inset: 0; z-index: 3000;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 0; padding: 32px 24px; background: var(--n-0); text-align: center;
+    overflow-y: auto;
+  }
+  .lab-bloqueio .arte { margin-bottom: 28px; }
+  .lab-bloqueio h1 {
+    font-size: 24px; line-height: 32px; font-weight: 600; letter-spacing: -0.01em;
+    color: var(--n-900); margin: 0 0 12px; max-width: 22ch; text-wrap: balance;
+  }
+  .lab-bloqueio p {
+    font-size: 15px; line-height: 24px; color: var(--n-700); margin: 0; max-width: 40ch;
+  }
+  .lab-bloqueio .miudo { font-size: 13px; line-height: 20px; color: var(--n-500); margin-top: 24px; max-width: 38ch; }
+  .lab-bloqueio .acoes { display: flex; flex-direction: column; align-items: center; gap: 12px; margin-top: 28px; }
+  .lab-bloqueio .link {
+    display: inline-block; max-width: 100%; padding: 10px 14px; border-radius: 8px;
+    background: var(--n-50); color: var(--n-600);
+    font-size: 12.5px; line-height: 18px; word-break: break-all;
+  }
+
   /* ── Dica do teste ────────────────────────────────────────────────────
      Aparece quando o lojista se perde. É preto, da linguagem do trilho e
      não do Partner: ninguém pode confundir a mão do teste com o produto. */
@@ -723,6 +750,39 @@
     .pz-help .ds-help-icon svg:last-child { display: none; }
   }
 </style>
+
+<!-- ── Tela pequena: o teste não começa ──────────────────────────────── -->
+<div class="lab-bloqueio" id="view-celular" hidden>
+  <span class="arte" aria-hidden="true">
+    <svg width="92" height="72" viewBox="0 0 92 72" fill="none">
+      <rect x="2" y="4" width="72" height="48" rx="5" stroke="#E0E0E0" stroke-width="2.5"/>
+      <path d="M2 58h72" stroke="#E0E0E0" stroke-width="2.5" stroke-linecap="round"/>
+      <path d="M12 16h40M12 26h52M12 36h30" stroke="#EEEEEE" stroke-width="3" stroke-linecap="round"/>
+      <rect x="62" y="30" width="26" height="40" rx="4.5" fill="#FFFFFF" stroke="#FA641E" stroke-width="2.5"/>
+      <path d="M72 64h6" stroke="#FA641E" stroke-width="2.5" stroke-linecap="round"/>
+      <circle cx="75" cy="16" r="9" fill="#FA641E"/>
+      <path d="M75 20.5v-.6c0-2.2 2.6-2.4 2.6-4.4a2.6 2.6 0 10-5.2 0" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/>
+      <circle cx="75" cy="23.6" r="1.1" fill="#fff"/>
+    </svg>
+  </span>
+
+  <h1>Esse teste pede uma tela maior</h1>
+  <p>
+    Ele reproduz a tela de Vendas do Pigz Partner do jeito que ela aparece no
+    computador — no celular a tabela não cabe, e a gente acabaria testando
+    outra tela, não a que precisa melhorar.
+  </p>
+
+  <div class="acoes">
+    <button class="lab-btn" id="copiar-link" type="button">Copiar o link</button>
+    <span class="link" id="o-link"></span>
+  </div>
+
+  <p class="miudo">
+    Abra este mesmo endereço num computador ou tablet, em qualquer navegador.
+    São de 3 a 5 minutos e a gente agradece de verdade.
+  </p>
+</div>
 
 <div class="lab-shell">
 
@@ -1071,6 +1131,53 @@ function irPara(fase) {
   window.scrollTo({ top: 0 });
   marco('fase:' + fase);
 }
+
+/* ═══ Tela pequena demais ══════════════════════════════════════════════
+   Duas medidas, e não só a largura: o celular deitado passa dos 800px de
+   largura com menos de 400 de altura, e ali o painel de 480px do chamado não
+   caberia de jeito nenhum. O menor lado precisa dar conta.
+
+   Reavaliado a cada giro e a cada mudança de tamanho — quem gira o tablet
+   para a vertical volta a ver a tela, sem perder a sessão em andamento. */
+const LARGURA_MINIMA = 768;
+/* 520 e não 600: o celular deitado mais alto que existe tem 440 de altura, e
+   um desktop com a janela baixa (1000×560) ainda dá conta do teste. Barrar
+   quem poderia fazer é pior do que deixar passar quem não deveria. */
+const MENOR_LADO_MINIMO = 520;
+
+function telaPequena() {
+  const menorLado = Math.min(window.innerWidth, window.innerHeight);
+  return window.innerWidth < LARGURA_MINIMA || menorLado < MENOR_LADO_MINIMO;
+}
+
+function conferirTamanho() {
+  const bloqueio = document.getElementById('view-celular');
+  const pequena = telaPequena();
+  bloqueio.hidden = !pequena;
+  document.querySelector('.lab-shell').style.visibility = pequena ? 'hidden' : '';
+  if (pequena && !M.telaPequenaVista) {
+    M.telaPequenaVista = window.innerWidth + '×' + window.innerHeight;
+    if (M.iniciadoEm) marco('tela-ficou-pequena', M.telaPequenaVista);
+  }
+}
+
+window.addEventListener('resize', conferirTamanho);
+window.addEventListener('orientationchange', () => setTimeout(conferirTamanho, 250));
+
+document.getElementById('o-link').textContent = location.origin + location.pathname;
+document.getElementById('copiar-link').addEventListener('click', async (e) => {
+  const botao = e.currentTarget;
+  const url = location.origin + location.pathname;
+  try {
+    await navigator.clipboard.writeText(url);
+    botao.textContent = 'Link copiado';
+  } catch (err) {
+    /* Sem permissão de área de transferência: o endereço está logo abaixo,
+       à mostra, e dá para selecionar na mão. */
+    botao.textContent = 'Copie o endereço abaixo';
+  }
+  setTimeout(() => { botao.textContent = 'Copiar o link'; }, 2600);
+});
 
 /* ═══ Persistência ═════════════════════════════════════════════════════
    ┌──────────────────────────────────────────────────────────────────┐
@@ -2144,6 +2251,7 @@ function gerarMd() {
     '- **Barrado por campo faltando:** ' + (M.barradoEm.length ? M.barradoEm.map((b) => 'passo ' + b.passo + ' (' + b.emSegundos + 's)').join(', ') : 'nunca'),
     '- **Replay da sessão:** ' + (eventos.length ? eventos.length + ' eventos' : M.gravacao),
     '- **Janela:** ' + M.janela + ' · ' + M.navegador,
+    (M.telaPequenaVista ? '- **Bateu na tela pequena:** sim (' + M.telaPequenaVista + ')\n' : '') +
     '',
     '## Chamado que o lojista montou',
     '',
@@ -2174,6 +2282,7 @@ function gerarMd() {
 }
 
 pintarTrilho();
+conferirTamanho();
 
 window.addEventListener('beforeunload', despachoDeSaida);
 /* No celular a aba costuma ser descartada sem beforeunload. */
