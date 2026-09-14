@@ -8,6 +8,9 @@ Teste de usabilidade do novo fluxo de abertura de chamado do Pigz Partner.
 | **Resultados** | https://usabilidade.pigz.com.br/resultados.html |
 | Player de uma sessão | https://usabilidade.pigz.com.br/player.html |
 
+> **Vai mexer no design?** As regras que guiaram este projeto — e os erros que
+> as produziram — estão em **[DESIGN.md](DESIGN.md)**.
+
 > **Vai ligar a coleta no n8n?** As instruções passo a passo estão em
 > **[HANDOFF.md](HANDOFF.md)**.
 
