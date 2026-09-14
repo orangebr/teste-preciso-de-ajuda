@@ -1164,10 +1164,15 @@ function conferirTamanho() {
 window.addEventListener('resize', conferirTamanho);
 window.addEventListener('orientationchange', () => setTimeout(conferirTamanho, 250));
 
-document.getElementById('o-link').textContent = location.origin + location.pathname;
+/* Endereço fixo, e não location.href: o que a pessoa manda para si mesma tem
+   que ser o endereço oficial do teste, mesmo que ela tenha chegado por um
+   espelho, por um preview ou com parâmetros na URL. */
+const ENDERECO_DO_TESTE = 'https://usabilidade.pigz.com.br';
+
+document.getElementById('o-link').textContent = ENDERECO_DO_TESTE;
 document.getElementById('copiar-link').addEventListener('click', async (e) => {
   const botao = e.currentTarget;
-  const url = location.origin + location.pathname;
+  const url = ENDERECO_DO_TESTE;
   try {
     await navigator.clipboard.writeText(url);
     botao.textContent = 'Link copiado';
