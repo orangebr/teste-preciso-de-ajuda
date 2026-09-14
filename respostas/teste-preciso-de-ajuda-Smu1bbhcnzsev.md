@@ -1,7 +1,7 @@
 # Teste do Preciso de Ajuda — sessão Smu1bbhcnzsev
 
 - **Quando:** 14/09/2026, 10:02:37
-- **Duração:** 0min 45s
+- **Duração:** 1min 02s
 - **Tela simulada:** Vendas (rota /merchant/:id/orders — o wizard chama de "Pedidos")
 - **Cliques:** 3 (2 fora de qualquer controle)
 - **Abriu o "?":** 0x
@@ -13,7 +13,7 @@
 - **Abriu "Ver mais":** não
 - **Trocou de tarefa:** 0x · **Voltou:** 0x
 - **Barrado por campo faltando:** nunca
-- **Replay da sessão:** 147 eventos
+- **Replay da sessão:** 209 eventos
 - **Janela:** 393×695 · Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.5.2 Mobile/15E148 Safari/604.1
 
 ## Chamado que o lojista montou
