@@ -1,7 +1,7 @@
 # Teste do Preciso de Ajuda — sessão Smu25e3223wy6
 
 - **Quando:** 15/09/2026, 00:04:27
-- **Duração:** 79min 19s
+- **Duração:** 80min 19s
 - **Tela simulada:** Vendas (rota /merchant/:id/orders — o wizard chama de "Pedidos")
 - **Cliques:** 18 (7 fora de qualquer controle)
 - **Abriu o "?":** 0x
@@ -13,7 +13,7 @@
 - **Abriu "Ver mais":** não
 - **Trocou de tarefa:** 0x · **Voltou:** 0x
 - **Barrado por campo faltando:** nunca
-- **Replay da sessão:** 676 eventos
+- **Replay da sessão:** 680 eventos
 - **Janela:** 1238×875 · Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36 OPR/135.0.0.0
 - **Bateu na tela pequena:** sim (470×809)
 
