@@ -1,20 +1,21 @@
 # Teste do Preciso de Ajuda — sessão Smu25e3223wy6
 
 - **Quando:** 15/09/2026, 00:04:27
-- **Duração:** 1min 27s
+- **Duração:** 1min 37s
 - **Tela simulada:** Vendas (rota /merchant/:id/orders — o wizard chama de "Pedidos")
-- **Cliques:** 16 (5 fora de qualquer controle)
+- **Cliques:** 18 (7 fora de qualquer controle)
 - **Abriu o "?":** 0x
 - **Sugestão da tela:** não respondeu
-- **Achou a ajuda sozinho:** NÃO — o teste deu 2 dica(s): 40s sem abrir a ajuda aos 42.7s; parado por 25s aos 69.7s
+- **Achou a ajuda sozinho:** NÃO — o teste deu 3 dica(s): 40s sem abrir a ajuda aos 42.7s; parado por 25s aos 69.7s; parado por 25s aos 96.2s
 - **Cliques em coisa que não responde:** 10
 - **Tentou fechar o chamado começado:** 0x (descartou 0x)
 - **Tentou "Abrir atendimento":** não
 - **Abriu "Ver mais":** não
 - **Trocou de tarefa:** 0x · **Voltou:** 0x
 - **Barrado por campo faltando:** nunca
-- **Replay da sessão:** 261 eventos
+- **Replay da sessão:** 299 eventos
 - **Janela:** 1238×875 · Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36 OPR/135.0.0.0
+- **Bateu na tela pequena:** sim (470×809)
 
 ## Chamado que o lojista montou
 
@@ -58,3 +59,5 @@
 | 36.9 | clique-sem-resposta | Notas fiscais |
 | 42.7 | teste-deu-uma-dica | 40s sem abrir a ajuda |
 | 69.7 | teste-deu-uma-dica | parado por 25s |
+| 90.6 | tela-ficou-pequena | 470×809 |
+| 96.2 | teste-deu-uma-dica | parado por 25s |
