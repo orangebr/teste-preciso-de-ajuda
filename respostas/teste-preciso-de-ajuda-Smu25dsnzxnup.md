@@ -1,20 +1,21 @@
 # Teste do Preciso de Ajuda — sessão Smu25dsnzxnup
 
 - **Quando:** 15/09/2026, 00:04:14
-- **Duração:** 0min 09s
+- **Duração:** 0min 55s
 - **Tela simulada:** Vendas (rota /merchant/:id/orders — o wizard chama de "Pedidos")
-- **Cliques:** 1 (0 fora de qualquer controle)
+- **Cliques:** 3 (2 fora de qualquer controle)
 - **Abriu o "?":** 0x
 - **Sugestão da tela:** não respondeu
-- **Achou a ajuda sozinho:** sim
+- **Achou a ajuda sozinho:** NÃO — o teste deu 1 dica(s): 40s sem abrir a ajuda aos 41s
 - **Cliques em coisa que não responde:** 0
 - **Tentou fechar o chamado começado:** 0x (descartou 0x)
 - **Tentou "Abrir atendimento":** não
 - **Abriu "Ver mais":** não
 - **Trocou de tarefa:** 0x · **Voltou:** 0x
 - **Barrado por campo faltando:** nunca
-- **Replay da sessão:** 25 eventos
+- **Replay da sessão:** 70 eventos
 - **Janela:** 1912×994 · Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36 Edg/152.0.0.0
+- **Bateu na tela pequena:** sim (1×1)
 
 ## Chamado que o lojista montou
 
@@ -46,3 +47,5 @@
 | --- | --- | --- |
 | 0 | fase:tarefa |  |
 | 5 | pilula-se-apresentou |  |
+| 41 | teste-deu-uma-dica | 40s sem abrir a ajuda |
+| 47.7 | tela-ficou-pequena | 1×1 |
