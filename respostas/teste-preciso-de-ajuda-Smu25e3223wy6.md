@@ -1,19 +1,19 @@
 # Teste do Preciso de Ajuda — sessão Smu25e3223wy6
 
 - **Quando:** 15/09/2026, 00:04:27
-- **Duração:** 0min 24s
+- **Duração:** 0min 40s
 - **Tela simulada:** Vendas (rota /merchant/:id/orders — o wizard chama de "Pedidos")
-- **Cliques:** 12 (4 fora de qualquer controle)
+- **Cliques:** 16 (5 fora de qualquer controle)
 - **Abriu o "?":** 0x
 - **Sugestão da tela:** não respondeu
 - **Achou a ajuda sozinho:** sim
-- **Cliques em coisa que não responde:** 7
+- **Cliques em coisa que não responde:** 10
 - **Tentou fechar o chamado começado:** 0x (descartou 0x)
 - **Tentou "Abrir atendimento":** não
 - **Abriu "Ver mais":** não
 - **Trocou de tarefa:** 0x · **Voltou:** 0x
 - **Barrado por campo faltando:** nunca
-- **Replay da sessão:** 135 eventos
+- **Replay da sessão:** 182 eventos
 - **Janela:** 1238×875 · Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36 OPR/135.0.0.0
 
 ## Chamado que o lojista montou
@@ -53,3 +53,6 @@
 | 14.1 | clique-sem-resposta | Dashboard |
 | 19.3 | clique-sem-resposta | Dashboard |
 | 20 | clique-sem-resposta | Dashboard |
+| 35.5 | clique-sem-resposta | Planos e assinaturas |
+| 36.3 | clique-sem-resposta | Notas fiscais |
+| 36.9 | clique-sem-resposta | Notas fiscais |
