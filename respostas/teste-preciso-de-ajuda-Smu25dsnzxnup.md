@@ -1,7 +1,7 @@
 # Teste do Preciso de Ajuda — sessão Smu25dsnzxnup
 
 - **Quando:** 15/09/2026, 00:04:14
-- **Duração:** 0min 03s
+- **Duração:** 0min 09s
 - **Tela simulada:** Vendas (rota /merchant/:id/orders — o wizard chama de "Pedidos")
 - **Cliques:** 1 (0 fora de qualquer controle)
 - **Abriu o "?":** 0x
@@ -13,7 +13,7 @@
 - **Abriu "Ver mais":** não
 - **Trocou de tarefa:** 0x · **Voltou:** 0x
 - **Barrado por campo faltando:** nunca
-- **Replay da sessão:** 13 eventos
+- **Replay da sessão:** 25 eventos
 - **Janela:** 1912×994 · Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36 Edg/152.0.0.0
 
 ## Chamado que o lojista montou
@@ -45,3 +45,4 @@
 | Segundo | Evento | Detalhe |
 | --- | --- | --- |
 | 0 | fase:tarefa |  |
+| 5 | pilula-se-apresentou |  |
