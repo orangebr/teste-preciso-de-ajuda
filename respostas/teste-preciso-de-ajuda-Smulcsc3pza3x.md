@@ -1,9 +1,9 @@
 # Teste do Preciso de Ajuda — sessão Smulcsc3pza3x
 
 - **Quando:** 28/09/2026, 10:39:07
-- **Duração:** 4min 10s
+- **Duração:** 4min 49s
 - **Tela simulada:** Vendas (rota /merchant/:id/orders — o wizard chama de "Pedidos")
-- **Cliques:** 35 (19 fora de qualquer controle)
+- **Cliques:** 46 (19 fora de qualquer controle)
 - **Abriu o "?":** 2x
 - **Sugestão da tela:** aceitou
 - **Achou a ajuda sozinho:** NÃO — o teste deu 3 dica(s): 40s sem abrir a ajuda aos 42.9s; parado por 25s aos 69.9s; parado por 25s aos 96.9s
@@ -13,7 +13,7 @@
 - **Abriu "Ver mais":** não
 - **Trocou de tarefa:** 0x · **Voltou:** 0x
 - **Barrado por campo faltando:** nunca
-- **Replay da sessão:** 921 eventos
+- **Replay da sessão:** 1081 eventos
 - **Janela:** 1280×910 · Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36
 
 ## Chamado que o lojista montou
@@ -35,9 +35,9 @@
 
 | Pergunta | Resposta |
 | --- | --- |
-| Estrelas (pedir ajuda nessa tela) | 0/5 |
-| Conseguiu sozinho? | — |
-| NPS (0–10) | — |
+| Estrelas (pedir ajuda nessa tela) | 5/5 |
+| Conseguiu sozinho? | sozinho |
+| NPS (0–10) | 7 |
 | O que atrapalhou | — |
 
 ## Linha do tempo
@@ -66,3 +66,15 @@
 | 245.7 | saiu-por | Finalizar teste |
 | 245.7 | chegou-na-avaliacao |  |
 | 245.7 | fase:opiniao |  |
+| 250.2 | form:estrelas | 5 |
+| 251.9 | avaliacao:avancou | pergunta 2 |
+| 262.6 | form:conseguiu | sozinho |
+| 263.6 | avaliacao:avancou | pergunta 3 |
+| 267.4 | form:nps | 7 |
+| 269.5 | form:nps | 8 |
+| 271.2 | form:nps | 7 |
+| 276.9 | form:nps | 8 |
+| 283.5 | form:nps | 7 |
+| 284.7 | avaliacao:avancou | pergunta 4 |
+| 289.4 | enviou-avaliacao |  |
+| 289.4 | fase:fim |  |
