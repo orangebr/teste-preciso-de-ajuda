@@ -1,7 +1,7 @@
 # Teste do Preciso de Ajuda — sessão Smur5q3zk2k9l
 
 - **Quando:** 02/10/2026, 12:08:03
-- **Duração:** 62min 53s
+- **Duração:** 57min 51s
 - **Tela simulada:** Vendas (rota /merchant/:id/orders — o wizard chama de "Pedidos")
 - **Cliques:** 5 (2 fora de qualquer controle)
 - **Abriu o "?":** 1x
@@ -13,7 +13,7 @@
 - **Abriu "Ver mais":** não
 - **Trocou de tarefa:** 0x · **Voltou:** 0x
 - **Barrado por campo faltando:** nunca
-- **Replay da sessão:** 3990 eventos
+- **Replay da sessão:** 3679 eventos
 - **Janela:** 1868×995 · Mozilla/5.0 (X11; Linux x86_64; rv:156.0) Gecko/20100101 Firefox/156.0
 
 ## Chamado que o lojista montou
