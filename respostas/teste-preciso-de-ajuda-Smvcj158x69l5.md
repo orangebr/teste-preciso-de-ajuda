@@ -1,10 +1,10 @@
 # Teste do Preciso de Ajuda — sessão Smvcj158x69l5
 
 - **Quando:** 17/10/2026, 11:03:42
-- **Duração:** 1min 02s
+- **Duração:** 1min 37s
 - **Tela simulada:** Vendas (rota /merchant/:id/orders — o wizard chama de "Pedidos")
-- **Cliques:** 44 (7 fora de qualquer controle)
-- **Abriu o "?":** 1x
+- **Cliques:** 49 (7 fora de qualquer controle)
+- **Abriu o "?":** 2x
 - **Sugestão da tela:** não respondeu
 - **Achou a ajuda sozinho:** sim
 - **Cliques em coisa que não responde:** 0
@@ -13,7 +13,7 @@
 - **Abriu "Ver mais":** não
 - **Trocou de tarefa:** 5x · **Voltou:** 6x
 - **Barrado por campo faltando:** nunca
-- **Replay da sessão:** 439 eventos
+- **Replay da sessão:** 560 eventos
 - **Janela:** 1875×1006 · Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36 OPR/136.0.0.0
 
 ## Chamado que o lojista montou
@@ -22,11 +22,11 @@
 | --- | --- |
 | Protocolo | — não enviou |
 | Categoria | Suporte Técnico |
-| Tarefa | Acesso e senhas |
-| Onde | No celular do garçom |
-| O que acontece | Não consigo criar usuário para funcionário |
+| Tarefa | Problemas com pedido |
+| Onde | Não sei dizer |
+| O que acontece | O pedido sumiu depois que aceitei |
 | Descrição | — |
-| Impacto | Atrapalha, mas dá pra trabalhar |
+| Impacto | — |
 | Tela | Pedidos |
 | Anexos | Nenhum |
 | Tamanho do relato | 0 caracteres |
@@ -82,3 +82,8 @@
 | 59.1 | voltou | para o passo 1 |
 | 59.5 | voltou-para-o-chat |  |
 | 60.2 | fechou-ajuda | clique fora |
+| 70 | abriu-ajuda | reabriu (2ª vez) |
+| 73.9 | escolheu:relatar-problema |  |
+| 90.6 | escolheu-tarefa | pedido |
+| 91.3 | escolheu-sintoma | O pedido não apareceu na lista |
+| 91.6 | escolheu-sintoma | O pedido sumiu depois que aceitei |
