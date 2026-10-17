@@ -1,9 +1,9 @@
 # Teste do Preciso de Ajuda — sessão Smvcj158x69l5
 
 - **Quando:** 17/10/2026, 11:03:42
-- **Duração:** 0min 57s
+- **Duração:** 1min 02s
 - **Tela simulada:** Vendas (rota /merchant/:id/orders — o wizard chama de "Pedidos")
-- **Cliques:** 39 (6 fora de qualquer controle)
+- **Cliques:** 44 (7 fora de qualquer controle)
 - **Abriu o "?":** 1x
 - **Sugestão da tela:** não respondeu
 - **Achou a ajuda sozinho:** sim
@@ -11,9 +11,9 @@
 - **Tentou fechar o chamado começado:** 0x (descartou 0x)
 - **Tentou "Abrir atendimento":** não
 - **Abriu "Ver mais":** não
-- **Trocou de tarefa:** 5x · **Voltou:** 4x
+- **Trocou de tarefa:** 5x · **Voltou:** 6x
 - **Barrado por campo faltando:** nunca
-- **Replay da sessão:** 397 eventos
+- **Replay da sessão:** 439 eventos
 - **Janela:** 1875×1006 · Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36 OPR/136.0.0.0
 
 ## Chamado que o lojista montou
@@ -26,7 +26,7 @@
 | Onde | No celular do garçom |
 | O que acontece | Não consigo criar usuário para funcionário |
 | Descrição | — |
-| Impacto | — |
+| Impacto | Atrapalha, mas dá pra trabalhar |
 | Tela | Pedidos |
 | Anexos | Nenhum |
 | Tamanho do relato | 0 caracteres |
@@ -77,3 +77,8 @@
 | 54.2 | escolheu-onde | No celular do garçom |
 | 54.8 | escolheu-sintoma | Não consigo criar usuário para funcionário |
 | 56.7 | avancou | para o passo 3 |
+| 58 | escolheu-impacto | Atrapalha, mas dá pra trabalhar |
+| 58.8 | voltou | para o passo 2 |
+| 59.1 | voltou | para o passo 1 |
+| 59.5 | voltou-para-o-chat |  |
+| 60.2 | fechou-ajuda | clique fora |
